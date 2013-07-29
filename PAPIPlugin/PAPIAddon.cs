@@ -1,27 +1,63 @@
 ﻿#region Usings
 
+using PAPIPlugin.Impl;
+using PAPIPlugin.Interfaces;
+using PAPIPlugin.Internal;
+using Tac;
 using UnityEngine;
 
 #endregion
 
 namespace PAPIPlugin
 {
-    [KSPAddon(KSPAddon.Startup.Flight, false)]
+    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
     public class PAPIAddon : MonoBehaviour
     {
-        private LightArrayManager _arrayManager;
+        private ILightArrayManager _arrayManager;
+
+        private ILightArrayConfig _config;
 
         public void Awake()
         {
-            _arrayManager = new LightArrayManager();
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
+            {
 
-            _arrayManager.AddArray(new PAPIArray(-0.0468, -74.708889, 73, 270));
-            _arrayManager.AddArray(new PAPIArray(-0.036, -74.50963, 73, 90));
+                return;
+            }
+
+            Util.LogInfo("Awake!");
+
+            _arrayManager = new DefaultLightArrayManager();
+
+            if (_config == null)
+            {
+                _arrayManager.LoadConfig();
+                _config = _arrayManager.LightConfig;
+            }
+            else
+            {
+                _arrayManager.LightConfig = _config;
+            }
         }
 
         public void Update()
         {
-            _arrayManager.Update();
+            if (_arrayManager != null)
+            {
+                _arrayManager.Update();
+            }
+        }
+
+        public void OnDestroy()
+        {
+            if (_arrayManager == null)
+            {
+                return;
+            }
+
+            Util.LogInfo("OnDestroy!");
+
+            _arrayManager.Dispose();
         }
     }
 }
