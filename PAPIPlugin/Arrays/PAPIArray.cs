@@ -61,12 +61,15 @@ namespace PAPIPlugin.Arrays
 
         public double Heading { get; set; }
 
+        public double HeightAboveTerrain { get; set; }
+
         #region IConfigNode Members
 
         public void Load(ConfigNode node)
         {
             BadGlidepathVariance = node.ConvertValue("BadGlidepath", DefaultBadGlidepathVariance);
             TargetGlidePath = node.ConvertValue("TargetGlidepath", DefaultTargetGlidePath);
+            HeightAboveTerrain = node.ConvertValue("Height", 0);
 
             try
             {
@@ -201,7 +204,7 @@ namespace PAPIPlugin.Arrays
 
             maxHeight = Math.Max(0, maxHeight);
             _relativeSurfacePosition =
-                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon, maxHeight + PAPILightRadius * 0.5));
+                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon, maxHeight + HeightAboveTerrain + PAPILightRadius * 0.5));
             _papiGameObject.transform.localPosition = _relativeSurfacePosition;
         }
 
