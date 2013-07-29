@@ -113,6 +113,11 @@ namespace PAPIPlugin.Arrays
 
             var currentCamera = Camera.main;
 
+            if (currentCamera == null)
+            {
+                return;
+            }
+
             var relativePosition = _papiGameObject.transform.InverseTransformPoint(currentCamera.transform.position);
 
             var normalizedPosition = relativePosition.normalized;
@@ -190,9 +195,7 @@ namespace PAPIPlugin.Arrays
             _partObjects = new GameObject[PAPIPartCount];
             for (var i = 0; i < PAPIPartCount; i++)
             {
-                var obj = new GameObject();
-
-                AddPAPIPart(obj);
+                var obj = AddPAPIPart();
 
                 obj.transform.parent = _papiGameObject.transform;
                 obj.transform.localPosition = (i - (PAPIPartCount / 2)) * PAPILightDifference;
@@ -204,7 +207,8 @@ namespace PAPIPlugin.Arrays
 
             maxHeight = Math.Max(0, maxHeight);
             _relativeSurfacePosition =
-                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon, maxHeight + HeightAboveTerrain + PAPILightRadius * 0.5));
+                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon,
+                    maxHeight + HeightAboveTerrain + PAPILightRadius));
             _papiGameObject.transform.localPosition = _relativeSurfacePosition;
         }
 
@@ -216,32 +220,29 @@ namespace PAPIPlugin.Arrays
             return direction - Vector3d.Dot(firstVector, direction) * firstVector;
         }
 
-        private static void AddPAPIPart(GameObject obj)
+        private static GameObject AddPAPIPart()
         {
-            var lineRenderer = obj.AddComponent<LineRenderer>();
+            var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
-            lineRenderer.useWorldSpace = false;
-            lineRenderer.transform.parent = obj.transform;
-            lineRenderer.transform.localPosition = Vector3.zero;
-            lineRenderer.transform.eulerAngles = Vector3.zero;
+            var material = new Material(Shader.Find("Particles/Additive"));
+            obj.renderer.sharedMaterial = material;
 
-            lineRenderer.material = new Material(Shader.Find("Particles/Additive"));
-            lineRenderer.SetColors(Color.red, Color.red);
-            lineRenderer.SetWidth(PAPILightRadius, PAPILightRadius);
-            lineRenderer.SetVertexCount(2);
-            lineRenderer.SetPosition(0, Vector3.zero);
-            lineRenderer.SetPosition(1, Vector3.up * PAPILightRadius);
+            obj.transform.localScale = new Vector3(PAPILightRadius, PAPILightRadius, PAPILightRadius);
+
+            var sphereCollider = obj.GetComponent<SphereCollider>();
+            sphereCollider.enabled = false;
+
+            return obj;
         }
 
         private void UpdatePAPIPart(int index, double difference, float alpha)
         {
             var gameObj = _partObjects[index];
 
-            var lineRenderer = gameObj.GetComponent<LineRenderer>();
-
             var color = GetArrayPartColor(index, difference);
             color.a = alpha;
-            lineRenderer.SetColors(color, color);
+
+            gameObj.renderer.material.SetColor("_TintColor", color);
         }
 
         private Color GetArrayPartColor(int index, double difference)
