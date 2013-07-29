@@ -30,6 +30,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -43,16 +46,46 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ILightArray.cs" />
-    <Compile Include="LightArrayManager.cs" />
+    <Compile Include="..\TacLib\Source\Icon.cs">
+      <Link>TacLib\Icon.cs</Link>
+    </Compile>
+    <Compile Include="..\TacLib\Source\PopupWindow.cs">
+      <Link>TacLib\PopupWindow.cs</Link>
+    </Compile>
+    <Compile Include="..\TacLib\Source\Utilities.cs">
+      <Link>TacLib\Utilities.cs</Link>
+    </Compile>
+    <Compile Include="..\TacLib\Source\Window.cs">
+      <Link>TacLib\Window.cs</Link>
+    </Compile>
+    <Compile Include="Arrays\AbstractLightArray.cs" />
+    <Compile Include="Impl\DefaultLightArrayConfig.cs" />
+    <Compile Include="Impl\DefaultLightGroup.cs" />
+    <Compile Include="Interfaces\ILightArray.cs" />
+    <Compile Include="Interfaces\ILightArrayConfig.cs" />
+    <Compile Include="Interfaces\ILightArrayManager.cs" />
+    <Compile Include="Interfaces\ILightGroup.cs" />
+    <Compile Include="Interfaces\ILightTypeManager.cs" />
+    <Compile Include="Internal\CelestialBodyExtensions.cs" />
+    <Compile Include="Internal\ConfigNodeExtensions.cs" />
+    <Compile Include="Internal\ExtensionMethods.cs" />
+    <Compile Include="LightArrayEventArguments.cs" />
+    <Compile Include="Impl\DefaultLightArrayManager.cs" />
     <Compile Include="PAPIAddon.cs" />
-    <Compile Include="PAPIArray.cs" />
+    <Compile Include="Arrays\PAPIArray.cs" />
+    <Compile Include="Impl\PAPITypeManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Util.cs" />
+    <Compile Include="Internal\Util.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /Y /I "$(TargetPath)" "$(KSP_PATH)/GameData/PAPIPlugin/Plugins/$(TargetFileName)"</PostBuildEvent>
+    <PostBuildEvent>mkdir "$(SolutionDir)assets/Plugins"
+xcopy /Y /I "$(TargetPath)" "$(SolutionDir)assets/Plugins"
+
+robocopy "$(SolutionDir)assets" "$(KSP_PATH)/GameData/PAPIPlugin" /PURGE /e
+
+exit 0</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

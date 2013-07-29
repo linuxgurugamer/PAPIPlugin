@@ -1,7 +1,6 @@
-﻿using System.Diagnostics;
-using Debug = UnityEngine.Debug;
+﻿using Debug = UnityEngine.Debug;
 
-namespace PAPIPlugin
+namespace PAPIPlugin.Internal
 {
     public class Util
     {
