@@ -34,8 +34,8 @@ namespace PAPIPlugin.Arrays
 
         public PAPIArray()
         {
-            TargetGlidePath = DefaultTargetGlidePath;
-            BadGlidepathVariance = DefaultBadGlidepathVariance;
+            TargetGlideslope = DefaultTargetGlidePath;
+            GlideslopeTolerance = DefaultBadGlidepathVariance;
 
             EnabledChanged += (sender, args) =>
             {
@@ -51,9 +51,9 @@ namespace PAPIPlugin.Arrays
             };
         }
 
-        public double BadGlidepathVariance { get; set; }
+        public double GlideslopeTolerance { get; set; }
 
-        public double TargetGlidePath { get; set; }
+        public double TargetGlideslope { get; set; }
 
         public double Longitude { get; set; }
 
@@ -67,8 +67,8 @@ namespace PAPIPlugin.Arrays
 
         public void Load(ConfigNode node)
         {
-            BadGlidepathVariance = node.ConvertValue("BadGlidepath", DefaultBadGlidepathVariance);
-            TargetGlidePath = node.ConvertValue("TargetGlidepath", DefaultTargetGlidePath);
+            GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultBadGlidepathVariance);
+            TargetGlideslope = node.ConvertValue("TargetGlideslope", DefaultTargetGlidePath);
             HeightAboveTerrain = node.ConvertValue("Height", 0);
 
             try
@@ -128,7 +128,7 @@ namespace PAPIPlugin.Arrays
 
             var angle = 90 - Math.Acos(normalDot) * (180 / Math.PI);
 
-            var difference = angle - TargetGlidePath;
+            var difference = angle - TargetGlideslope;
 
             for (var i = 0; i < PAPIPartCount; i++)
             {
@@ -247,11 +247,11 @@ namespace PAPIPlugin.Arrays
 
         private Color GetArrayPartColor(int index, double difference)
         {
-            if (difference < -BadGlidepathVariance)
+            if (difference < -GlideslopeTolerance)
             {
                 return Color.red;
             }
-            if (difference > BadGlidepathVariance)
+            if (difference > GlideslopeTolerance)
             {
                 return Color.white;
             }
