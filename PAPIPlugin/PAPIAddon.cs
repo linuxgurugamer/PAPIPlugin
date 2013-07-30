@@ -14,7 +14,7 @@ namespace PAPIPlugin
     {
         private ILightArrayManager _arrayManager;
 
-        private ILightArrayConfig _config;
+        private static ILightArrayConfig _config;
 
         public void Awake()
         {
