@@ -20,7 +20,6 @@ namespace PAPIPlugin
         {
             if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
-
                 return;
             }
 
@@ -30,8 +29,7 @@ namespace PAPIPlugin
 
             if (_config == null)
             {
-                _arrayManager.LoadConfig();
-                _config = _arrayManager.LightConfig;
+                _config = _arrayManager.LoadConfig();
             }
             else
             {

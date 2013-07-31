@@ -1,7 +1,6 @@
 ﻿#region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using PAPIPlugin.Interfaces;
@@ -25,7 +24,9 @@ namespace PAPIPlugin.Impl
             set
             {
                 if (Equals(_lightConfig, value))
+                {
                     return;
+                }
 
                 _lightConfig = value;
 
@@ -33,15 +34,7 @@ namespace PAPIPlugin.Impl
             }
         }
 
-        private void InitializeConfig(ILightArrayConfig lightConfig)
-        {
-            foreach (var lightArray in lightConfig.LightArrayGroups.SelectMany(group => group.LightArrays))
-            {
-                lightArray.InitializeDisplay(this);
-            }
-        }
-
-        public void LoadConfig()
+        public ILightArrayConfig LoadConfig()
         {
             Util.LogInfo("Starting to parse light definitions...");
 
@@ -56,6 +49,8 @@ namespace PAPIPlugin.Impl
                 LightConfig.LightArrayGroups.Count(), LightConfig.LightArrayGroups.Sum(group => group.LightArrays.Count()), stopwatch.Elapsed));
 
             OnParsingFinished();
+
+            return LightConfig;
         }
 
         public void Update()
@@ -72,6 +67,14 @@ namespace PAPIPlugin.Impl
         }
 
         #endregion
+
+        private void InitializeConfig(ILightArrayConfig lightConfig)
+        {
+            foreach (var lightArray in lightConfig.LightArrayGroups.SelectMany(group => group.LightArrays))
+            {
+                lightArray.InitializeDisplay(this);
+            }
+        }
 
         protected virtual void OnParsingFinished()
         {

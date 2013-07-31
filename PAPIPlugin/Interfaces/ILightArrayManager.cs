@@ -12,7 +12,7 @@ namespace PAPIPlugin.Interfaces
 
         ILightArrayConfig LightConfig { get; set; }
 
-        void LoadConfig();
+        ILightArrayConfig LoadConfig();
 
         void Update();
     }
