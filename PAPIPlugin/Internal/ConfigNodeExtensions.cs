@@ -9,11 +9,13 @@ namespace PAPIPlugin.Internal
 {
     public static class ConfigNodeExtensions
     {
-        public static T ConvertValue<T>(this ConfigNode node, string key, T def = default(T))
+        public static bool TryConvertValue<T>(this ConfigNode node, string key, out T value)
         {
+            value = default(T);
+
             if (!node.HasValue(key))
             {
-                return def;
+                return false;
             }
 
             var stringValue = node.GetValue(key);
@@ -22,37 +24,36 @@ namespace PAPIPlugin.Internal
 
             try
             {
-                return (T) typeConverter.ConvertFromInvariantString(stringValue);
+                value = (T) typeConverter.ConvertFromInvariantString(stringValue);
+
+                return true;
             }
             catch (NotSupportedException)
             {
                 Util.LogWarning(string.Format("Cannot convert value \"{0}\" to type {1}", stringValue, typeof(T).FullName));
 
-                return def;
+                return false;
             }
+        }
+
+        public static T ConvertValue<T>(this ConfigNode node, string key, T def = default(T))
+        {
+            T value;
+
+            return TryConvertValue(node, key, out value) ? value : def;
         }
 
         public static T ConvertValueWithException<T>(this ConfigNode node, string key)
         {
-            if (!node.HasValue(key))
+            T value;
+
+            if (TryConvertValue(node, key, out value))
             {
-                throw new FormatException(string.Format("The key \"{0}\" could not be found.", key));
+                return value;
             }
-
-            var stringValue = node.GetValue(key);
-
-            var typeConverter = TypeDescriptor.GetConverter(typeof(T));
-
-            try
+            else
             {
-                return (T) typeConverter.ConvertFromInvariantString(stringValue);
-            }
-            catch (NotSupportedException)
-            {
-                Util.LogWarning(string.Format("Cannot convert value \"{0}\" to type {1}", stringValue, typeof(T).FullName));
-
-                throw new FormatException(string.Format("Failed to convert the value \"{0}\" for key \"{1}\" to type \"{2}\"", stringValue, key,
-                    typeof(T).FullName));
+                throw new FormatException(string.Format("Failed to convert the value for key \"{0}\" to type \"{1}\"", key, typeof(T).FullName));
             }
         }
     }
