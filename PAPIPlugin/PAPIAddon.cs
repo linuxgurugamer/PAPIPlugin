@@ -20,6 +20,7 @@ namespace PAPIPlugin
         {
             if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
+                enabled = false;
                 return;
             }
 
