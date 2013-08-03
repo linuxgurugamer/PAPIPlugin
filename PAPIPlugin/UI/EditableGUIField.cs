@@ -51,7 +51,11 @@ namespace PAPIPlugin.UI
         {
             ValidStyle = new GUIStyle(GUI.skin.textField);
 
-            InvalidStyle = new GUIStyle(GUI.skin.textField) {normal = new GUIStyleState {textColor = Color.red}};
+            InvalidStyle = new GUIStyle(ValidStyle)
+            {
+                onHover = {textColor = Color.red},
+                normal = {textColor = Color.red}
+            };
         }
 
         public void LayoutTextField(params GUILayoutOption[] options)
