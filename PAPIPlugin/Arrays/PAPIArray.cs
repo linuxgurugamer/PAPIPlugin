@@ -13,18 +13,16 @@ namespace PAPIPlugin.Arrays
 {
     public class PAPIArray : AbstractLightArray, IConfigNode
     {
-        private const int PAPIPartCount = 4;
+        public const int DefaultPartCount = 4;
 
-        private const float PAPILightRadius = 10.0f;
+        public const float DefaultLightRadius = 10.0f;
 
-        private const double DefaultTargetGlidePath = 6;
+        public const double DefaultTargetGlidePath = 6;
 
         /// <summary>
         ///     If the difference of the gliepath from the target is more than this the whole array will show either red or white.
         /// </summary>
-        private const double DefaultBadGlidepathVariance = 1.5;
-
-        private static readonly Vector3 PAPILightDifference = Vector3.right * PAPILightRadius * 1.5f;
+        public const double DefaultGlideslopeTolerance = 1.5;
 
         private GameObject _papiGameObject;
 
@@ -35,7 +33,7 @@ namespace PAPIPlugin.Arrays
         public PAPIArray()
         {
             TargetGlideslope = DefaultTargetGlidePath;
-            GlideslopeTolerance = DefaultBadGlidepathVariance;
+            GlideslopeTolerance = DefaultGlideslopeTolerance;
 
             EnabledChanged += (sender, args) =>
             {
@@ -63,13 +61,22 @@ namespace PAPIPlugin.Arrays
 
         public double HeightAboveTerrain { get; set; }
 
+        public int PartCount { get; set; }
+
+        public float LightRadius { get; set; }
+
+        public float LightDistance { get; set; }
+
         #region IConfigNode Members
 
         public void Load(ConfigNode node)
         {
-            GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultBadGlidepathVariance);
+            GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultGlideslopeTolerance);
             TargetGlideslope = node.ConvertValue("TargetGlideslope", DefaultTargetGlidePath);
             HeightAboveTerrain = node.ConvertValue("Height", 0);
+            PartCount = node.ConvertValue("PartCount", DefaultPartCount);
+            LightRadius = node.ConvertValue("LightRadius", DefaultLightRadius);
+            LightDistance = node.ConvertValue("LightDistance", LightRadius * 0.5f);
 
             try
             {
@@ -130,7 +137,7 @@ namespace PAPIPlugin.Arrays
 
             var difference = angle - TargetGlideslope;
 
-            for (var i = 0; i < PAPIPartCount; i++)
+            for (var i = 0; i < PartCount; i++)
             {
                 if (directionDot <= 0)
                 {
@@ -192,13 +199,13 @@ namespace PAPIPlugin.Arrays
             _papiGameObject.transform.localRotation = Quaternion.LookRotation(headingVector, surfaceNormal);
 
             var maxHeight = double.MinValue;
-            _partObjects = new GameObject[PAPIPartCount];
-            for (var i = 0; i < PAPIPartCount; i++)
+            _partObjects = new GameObject[PartCount];
+            for (var i = 0; i < PartCount; i++)
             {
                 var obj = AddPAPIPart();
 
                 obj.transform.parent = _papiGameObject.transform;
-                obj.transform.localPosition = (i - (PAPIPartCount / 2)) * PAPILightDifference;
+                obj.transform.localPosition = GetLocalLighPosition(i);
 
                 maxHeight = Math.Max(maxHeight, parentBody.GetSurfaceHeight(Latitude, Longitude));
 
@@ -207,9 +214,24 @@ namespace PAPIPlugin.Arrays
 
             maxHeight = Math.Max(0, maxHeight);
             _relativeSurfacePosition =
-                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon,
-                    maxHeight + HeightAboveTerrain + PAPILightRadius));
+                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon, maxHeight + HeightAboveTerrain + LightRadius));
             _papiGameObject.transform.localPosition = _relativeSurfacePosition;
+        }
+
+        /// <summary>
+        ///     Gets the local position given a zero-based index.
+        /// </summary>
+        /// <param name="i">The index of the light, zero-based</param>
+        /// <returns>A local position specifying the light position</returns>
+        private Vector3 GetLocalLighPosition(int i)
+        {
+            var countHalf = PartCount / 2.0;
+
+            var offsetMult = (float) (i - countHalf - 0.5);
+
+            var distance = LightRadius + LightDistance;
+
+            return Vector3.right * offsetMult * distance;
         }
 
         private static Vector3d Orthonormalise(Vector3d direction, Vector3d firstVector)
@@ -220,14 +242,14 @@ namespace PAPIPlugin.Arrays
             return direction - Vector3d.Dot(firstVector, direction) * firstVector;
         }
 
-        private static GameObject AddPAPIPart()
+        private GameObject AddPAPIPart()
         {
             var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
             var material = new Material(Shader.Find("Particles/Additive"));
             obj.renderer.sharedMaterial = material;
 
-            obj.transform.localScale = new Vector3(PAPILightRadius, PAPILightRadius, PAPILightRadius);
+            obj.transform.localScale = new Vector3(LightRadius, LightRadius, LightRadius);
 
             var sphereCollider = obj.GetComponent<SphereCollider>();
             sphereCollider.enabled = false;
@@ -257,8 +279,9 @@ namespace PAPIPlugin.Arrays
             }
 
             // This should map temp into [-1, 1]
-            double temp = index - (PAPIPartCount / 2);
-            temp = temp / (PAPIPartCount / 2);
+            double temp = index - (PartCount / 2);
+// ReSharper disable once PossibleLossOfFraction
+            temp = temp / (PartCount / 2);
 
             return temp > difference ? Color.red : Color.white;
         }
