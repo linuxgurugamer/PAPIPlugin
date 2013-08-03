@@ -37,12 +37,14 @@
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>G:\Programme\KSP\0.21\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>G:\Programme\KSP\0.21\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +71,7 @@
     <Compile Include="Internal\CelestialBodyExtensions.cs" />
     <Compile Include="Internal\ConfigNodeExtensions.cs" />
     <Compile Include="Internal\ExtensionMethods.cs" />
+    <Compile Include="UI\EditableGUIField.cs" />
     <Compile Include="LightArrayEventArguments.cs" />
     <Compile Include="Impl\DefaultLightArrayManager.cs" />
     <Compile Include="PAPIAddon.cs" />
@@ -84,7 +87,7 @@
     <PostBuildEvent>mkdir "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
 xcopy /Y /I "$(TargetPath)" "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
 
-robocopy "$(SolutionDir)assets/GameData/" "$(KSP_PATH)/GameData/" /PURGE /e
+robocopy "$(SolutionDir)assets/GameData/PAPIPlugin" "$(KSP_PATH)/GameData/PAPIPlugin" /PURGE /e
 
 cd /d "$(SolutionDir)assets"
 echo %25CD%25
