@@ -3,7 +3,6 @@
 using PAPIPlugin.Impl;
 using PAPIPlugin.Interfaces;
 using PAPIPlugin.Internal;
-using Tac;
 using UnityEngine;
 
 #endregion
@@ -15,13 +14,13 @@ namespace PAPIPlugin
     {
         private ILightArrayManager _arrayManager;
 
-        private ILightArrayConfig _config;
+        private static ILightArrayConfig _config;
 
         public void Awake()
         {
             if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
             {
-
+                enabled = false;
                 return;
             }
 
@@ -31,8 +30,7 @@ namespace PAPIPlugin
 
             if (_config == null)
             {
-                _arrayManager.LoadConfig();
-                _config = _arrayManager.LightConfig;
+                _config = _arrayManager.LoadConfig();
             }
             else
             {

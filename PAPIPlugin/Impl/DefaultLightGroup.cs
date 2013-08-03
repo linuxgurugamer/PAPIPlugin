@@ -22,21 +22,13 @@ namespace PAPIPlugin.Impl
 
         public void Load(ConfigNode node)
         {
-            var name = node.GetValue("Name");
-
-            if (string.IsNullOrEmpty(name))
-            {
-                Util.LogWarning("Name value not found in config!");
-                return;
-            }
-
-            Name = name;
+            Name = node.GetValue("Name");
 
             var bodyName = node.GetValue("Body");
 
             if (string.IsNullOrEmpty(bodyName))
             {
-                Util.LogWarning(string.Format("The parent body value of light group {0} is missing!", Name));
+                Util.LogWarning(string.Format("The parent body value of light group {0} is missing!", Name ?? "<unnamed>"));
                 return;
             }
 
@@ -44,11 +36,11 @@ namespace PAPIPlugin.Impl
 
             if (ParentBody == null)
             {
-                Util.LogWarning(string.Format("The parent body {0} of light group {1} could not be found.", bodyName, Name));
+                Util.LogWarning(string.Format("The parent body {0} of light group {1} could not be found.", bodyName, Name ?? "<unnamed>"));
                 return;
             }
 
-            Util.LogInfo(string.Format("Found light group {0} on body {1}.", Name, ParentBody.name));
+            Util.LogInfo(string.Format("Found light group {0} on body {1}.", Name ?? "<unnamed>", ParentBody.name));
 
             var configNodes = node.GetNodes(LightNodeName);
 
@@ -148,6 +140,14 @@ namespace PAPIPlugin.Impl
             newManager.Initialize(this);
 
             return newManager;
+        }
+
+        public void OnGui(int windowId)
+        {
+            foreach (var lightTypeManager in _managers.Values)
+            {
+                lightTypeManager.OnGui(windowId);
+            }
         }
 
         public void Destroy()

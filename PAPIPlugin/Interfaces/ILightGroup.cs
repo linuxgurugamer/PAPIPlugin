@@ -18,5 +18,7 @@ namespace PAPIPlugin.Interfaces
         T GetOrAddTypeManager<T>() where T : ILightTypeManager, new();
 
         T GetOrAddTypeManager<T>(Func<T> creatorFunc) where T : ILightTypeManager;
+
+        void OnGui(int windowId);
     }
 }

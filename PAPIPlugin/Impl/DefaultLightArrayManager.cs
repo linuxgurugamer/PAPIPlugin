@@ -1,11 +1,13 @@
 ﻿#region Usings
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using PAPIPlugin.Interfaces;
 using PAPIPlugin.Internal;
+using PAPIPlugin.UI;
+using Tac;
+using UnityEngine;
 
 #endregion
 
@@ -13,7 +15,18 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayManager : ILightArrayManager
     {
+        private readonly Icon<DefaultLightArrayManager> _groupWindowIcon;
+
+        private GroupWindow<ILightArrayConfig> _groupWindow;
+
         private ILightArrayConfig _lightConfig;
+
+        public DefaultLightArrayManager()
+        {
+            _groupWindowIcon = new Icon<DefaultLightArrayManager>(new Rect(Screen.width * 0.8f, 0.0f, 80.0f, 20.0f), "icon.png", "Light groups",
+                "Opens the light group overview", OnIconClickHandler);
+            _groupWindowIcon.SetVisible(true);
+        }
 
         #region ILightArrayManager Members
 
@@ -25,7 +38,9 @@ namespace PAPIPlugin.Impl
             set
             {
                 if (Equals(_lightConfig, value))
+                {
                     return;
+                }
 
                 _lightConfig = value;
 
@@ -33,15 +48,7 @@ namespace PAPIPlugin.Impl
             }
         }
 
-        private void InitializeConfig(ILightArrayConfig lightConfig)
-        {
-            foreach (var lightArray in lightConfig.LightArrayGroups.SelectMany(group => group.LightArrays))
-            {
-                lightArray.InitializeDisplay(this);
-            }
-        }
-
-        public void LoadConfig()
+        public ILightArrayConfig LoadConfig()
         {
             Util.LogInfo("Starting to parse light definitions...");
 
@@ -56,6 +63,8 @@ namespace PAPIPlugin.Impl
                 LightConfig.LightArrayGroups.Count(), LightConfig.LightArrayGroups.Sum(group => group.LightArrays.Count()), stopwatch.Elapsed));
 
             OnParsingFinished();
+
+            return LightConfig;
         }
 
         public void Update()
@@ -72,6 +81,27 @@ namespace PAPIPlugin.Impl
         }
 
         #endregion
+
+        private void OnIconClickHandler()
+        {
+            if (_groupWindow == null)
+            {
+                _groupWindow = new GroupWindow<ILightArrayConfig>(LightConfig);
+                _groupWindow.SetVisible(true);
+            }
+            else
+            {
+                _groupWindow.ToggleVisible();
+            }
+        }
+
+        private void InitializeConfig(ILightArrayConfig lightConfig)
+        {
+            foreach (var lightArray in lightConfig.LightArrayGroups.SelectMany(group => group.LightArrays))
+            {
+                lightArray.InitializeDisplay(this);
+            }
+        }
 
         protected virtual void OnParsingFinished()
         {
@@ -90,6 +120,13 @@ namespace PAPIPlugin.Impl
         protected virtual void Dispose(bool disposing)
         {
             LightConfig.Destroy();
+
+            _groupWindowIcon.SetVisible(false);
+
+            if (_groupWindow != null)
+            {
+                _groupWindow.SetVisible(false);
+            }
         }
     }
 }

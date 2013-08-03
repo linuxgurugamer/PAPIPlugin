@@ -108,4 +108,5 @@ Backup*/
 UpgradeLog*.XML
 
 ### Plugin specific ignores ###
-assets/Plugins/
+assets/**/*.dll
+assets/**/*.zip
