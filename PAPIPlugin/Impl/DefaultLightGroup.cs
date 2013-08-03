@@ -142,6 +142,14 @@ namespace PAPIPlugin.Impl
             return newManager;
         }
 
+        public void OnGui(int windowId)
+        {
+            foreach (var lightTypeManager in _managers.Values)
+            {
+                lightTypeManager.OnGui(windowId);
+            }
+        }
+
         public void Destroy()
         {
             foreach (var lightArray in _lightArrays)
