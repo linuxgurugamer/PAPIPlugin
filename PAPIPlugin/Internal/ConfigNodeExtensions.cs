@@ -1,6 +1,7 @@
 ﻿#region Usings
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 #endregion
@@ -9,45 +10,59 @@ namespace PAPIPlugin.Internal
 {
     public static class ConfigNodeExtensions
     {
-        public static bool TryConvertValue<T>(this ConfigNode node, string key, out T value)
+        public delegate bool ConverterDelegate<T>(ConfigNode node, string key, out T value);
+
+        public static bool TryConvertValue<T>(this ConfigNode node, string key, out T value, ConverterDelegate<T> converter)
         {
-            value = default(T);
-
-            if (!node.HasValue(key))
+            if (converter != null || (converter = GetDefaultConverter<T>()) != null)
             {
-                return false;
+                return converter(node, key, out value);
             }
-
-            var stringValue = node.GetValue(key);
-
-            var typeConverter = TypeDescriptor.GetConverter(typeof(T));
-
-            try
+            else
             {
-                value = (T) typeConverter.ConvertFromInvariantString(stringValue);
+                value = default(T);
 
-                return true;
-            }
-            catch (NotSupportedException)
-            {
-                Util.LogWarning(string.Format("Cannot convert value \"{0}\" to type {1}", stringValue, typeof(T).FullName));
+                if (!node.HasValue(key))
+                {
+                    return false;
+                }
 
-                return false;
+                var stringValue = node.GetValue(key);
+
+                var typeConverter = TypeDescriptor.GetConverter(typeof(T));
+
+                try
+                {
+                    value = (T)typeConverter.ConvertFromInvariantString(stringValue);
+
+                    return true;
+                }
+                catch (NotSupportedException)
+                {
+                    Util.LogWarning(string.Format("Cannot convert value \"{0}\" to type {1}", stringValue, typeof(T).FullName));
+
+                    return false;
+                }
             }
         }
 
-        public static T ConvertValue<T>(this ConfigNode node, string key, T def = default(T))
+        private static ConverterDelegate<T> GetDefaultConverter<T>()
         {
-            T value;
-
-            return TryConvertValue(node, key, out value) ? value : def;
+            return null;
         }
 
-        public static T ConvertValueWithException<T>(this ConfigNode node, string key)
+        public static T ConvertValue<T>(this ConfigNode node, string key, T def = default(T), ConverterDelegate<T> converter = null)
         {
             T value;
 
-            if (TryConvertValue(node, key, out value))
+            return TryConvertValue(node, key, out value, converter) ? value : def;
+        }
+
+        public static T ConvertValueWithException<T>(this ConfigNode node, string key, ConverterDelegate<T> converter = null)
+        {
+            T value;
+
+            if (TryConvertValue(node, key, out value, converter))
             {
                 return value;
             }
