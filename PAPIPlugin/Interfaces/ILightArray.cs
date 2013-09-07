@@ -9,15 +9,6 @@ namespace PAPIPlugin.Interfaces
     public interface ILightArray
     {
         /// <summary>
-        ///     Gets or sets the enabled status of the array.
-        /// </summary>
-        /// <remarks>
-        ///     Implementing classes should use this to reduce the performence impact
-        ///     when the array is disabled.
-        /// </remarks>
-        bool Enabled { get; set; }
-
-        /// <summary>
         ///     Initializes the array with the given parent group.
         /// </summary>
         /// <remarks>

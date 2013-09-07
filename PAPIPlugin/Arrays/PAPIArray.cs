@@ -32,19 +32,6 @@ namespace PAPIPlugin.Arrays
         {
             TargetGlideslope = DefaultTargetGlidePath;
             GlideslopeTolerance = DefaultGlideslopeTolerance;
-
-            EnabledChanged += (sender, args) =>
-                {
-                    if (Enabled)
-                    {
-                        return;
-                    }
-
-                    foreach (var partObject in _partObjects)
-                    {
-                        partObject.SetActive(false);
-                    }
-                };
         }
 
         public double GlideslopeTolerance { get; set; }
@@ -88,11 +75,6 @@ namespace PAPIPlugin.Arrays
 
         public override void Update()
         {
-            if (!Enabled)
-            {
-                return;
-            }
-
             var currentCamera = Camera.main;
 
             if (currentCamera == null)
