@@ -28,38 +28,28 @@ namespace PAPIPlugin.Arrays
 
         private GameObject[] _partObjects;
 
-        private Vector3d _relativeSurfacePosition;
-
         public PAPIArray()
         {
             TargetGlideslope = DefaultTargetGlidePath;
             GlideslopeTolerance = DefaultGlideslopeTolerance;
 
             EnabledChanged += (sender, args) =>
-            {
-                if (Enabled)
                 {
-                    return;
-                }
+                    if (Enabled)
+                    {
+                        return;
+                    }
 
-                foreach (var partObject in _partObjects)
-                {
-                    partObject.SetActive(false);
-                }
-            };
+                    foreach (var partObject in _partObjects)
+                    {
+                        partObject.SetActive(false);
+                    }
+                };
         }
 
         public double GlideslopeTolerance { get; set; }
 
         public double TargetGlideslope { get; set; }
-
-        public double Longitude { get; set; }
-
-        public double Latitude { get; set; }
-
-        public double Heading { get; set; }
-
-        public double HeightAboveTerrain { get; set; }
 
         public int PartCount { get; set; }
 
@@ -67,37 +57,22 @@ namespace PAPIPlugin.Arrays
 
         public float LightDistance { get; set; }
 
-        #region IConfigNode Members
+        public Vector3 LocalPosition { get; set; }
 
         public void Load(ConfigNode node)
         {
             GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultGlideslopeTolerance);
             TargetGlideslope = node.ConvertValue("TargetGlideslope", DefaultTargetGlidePath);
-            HeightAboveTerrain = node.ConvertValue("Height", 0);
             PartCount = node.ConvertValue("PartCount", DefaultPartCount);
             LightRadius = node.ConvertValue("LightRadius", DefaultLightRadius);
-            LightDistance = node.ConvertValue("LightDistance", LightRadius * 0.5f);
-
-            try
-            {
-                Longitude = node.ConvertValueWithException<double>("Longitude").ClampAndLog(-180, 180);
-                Latitude = node.ConvertValueWithException<double>("Latitude").ClampAndLog(-90, 90);
-
-                var headingDeg = node.ConvertValueWithException<double>("Heading").ClampAndLog(0, 360);
-                Heading = (headingDeg / 180) * Math.PI;
-            }
-            catch (FormatException e)
-            {
-                Util.LogWarning(e.Message);
-            }
+            LightDistance = node.ConvertValue("LightDistance", LightRadius * 1.5f);
+            LocalPosition = node.ConvertValue("LocalPosition", Vector3.zero);
         }
 
         public void Save(ConfigNode node)
         {
             throw new NotImplementedException();
         }
-
-        #endregion
 
         public override void Destroy()
         {
@@ -153,52 +128,24 @@ namespace PAPIPlugin.Arrays
             }
         }
 
-        public override void InitializeDisplay(ILightArrayManager arrayManager)
+        public override void Initialize(ILightGroup @group, GameObject parentObject)
         {
-            base.InitializeDisplay(arrayManager);
+            Util.LogWarning("Initialize: " + group + " " + parentObject);
 
-            InitializePAPIParts(Latitude, Longitude, Heading);
-        }
-
-        public override void Initialize(ILightGroup @group)
-        {
-            base.Initialize(@group);
+            base.Initialize(@group, parentObject);
 
             @group.GetOrAddTypeManager<PAPITypeManager>();
+
+            InitializePAPIParts(parentObject);
         }
 
-        /// <summary>
-        ///     Initializes the whole array at the given latitude and longitude with the given altitude. The heading is the
-        ///     direction to array looks to and should be in the range [0, 2 * PI).
-        /// </summary>
-        /// <param name="lat">The latitude</param>
-        /// <param name="lon">The longitude</param>
-        /// <param name="heading">The heading in radians.</param>
-        private void InitializePAPIParts(double lat, double lon, double heading)
+        private void InitializePAPIParts(GameObject parentObject)
         {
-            var parentBody = ParentGroup.ParentBody;
-
-            var pqs = parentBody.pqsController;
-
-            var surfaceNormal = parentBody.transform.InverseTransformDirection(parentBody.GetSurfaceNVector(lat, lon));
-            var zeroAltSurface = pqs.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon, 0));
-
-            var north = Vector3.up * (float) pqs.radius; // We are in local space so up * radius is the north pole
-
-            var directionToNorth = (north - zeroAltSurface).normalized;
-
-            var orthogonalNorthDir = Orthonormalise(directionToNorth, surfaceNormal);
-
-            var anotherVector = Vector3d.Cross(surfaceNormal, orthogonalNorthDir);
-
-            var headingVector = orthogonalNorthDir * Math.Cos(heading) + anotherVector * Math.Sin(heading);
-
             _papiGameObject = new GameObject();
-            _papiGameObject.transform.parent = parentBody.transform;
-            _papiGameObject.transform.localPosition = zeroAltSurface;
-            _papiGameObject.transform.localRotation = Quaternion.LookRotation(headingVector, surfaceNormal);
+            _papiGameObject.transform.parent = parentObject.transform;
+            _papiGameObject.transform.localPosition = LocalPosition;
+            _papiGameObject.transform.localEulerAngles = Vector3.zero;
 
-            var maxHeight = double.MinValue;
             _partObjects = new GameObject[PartCount];
             for (var i = 0; i < PartCount; i++)
             {
@@ -206,16 +153,12 @@ namespace PAPIPlugin.Arrays
 
                 obj.transform.parent = _papiGameObject.transform;
                 obj.transform.localPosition = GetLocalLighPosition(i);
-
-                maxHeight = Math.Max(maxHeight, parentBody.GetSurfaceHeight(Latitude, Longitude));
+                obj.transform.localEulerAngles = Vector3.zero;
 
                 _partObjects[i] = obj;
             }
 
-            maxHeight = Math.Max(0, maxHeight);
-            _relativeSurfacePosition =
-                parentBody.transform.InverseTransformPoint(parentBody.GetWorldSurfacePosition(lat, lon, maxHeight + HeightAboveTerrain + LightRadius));
-            _papiGameObject.transform.localPosition = _relativeSurfacePosition;
+            _papiGameObject.transform.localPosition = Vector3.zero;
         }
 
         /// <summary>
@@ -225,21 +168,7 @@ namespace PAPIPlugin.Arrays
         /// <returns>A local position specifying the light position</returns>
         private Vector3 GetLocalLighPosition(int i)
         {
-            var countHalf = PartCount / 2.0;
-
-            var offsetMult = (float) (i - countHalf - 0.5);
-
-            var distance = LightRadius + LightDistance;
-
-            return Vector3.right * offsetMult * distance;
-        }
-
-        private static Vector3d Orthonormalise(Vector3d direction, Vector3d firstVector)
-        {
-            // This is basically the first step of a Gram–Schmidt process
-            // See http://en.wikipedia.org/wiki/Gram%E2%80%93Schmidt_process
-
-            return direction - Vector3d.Dot(firstVector, direction) * firstVector;
+            return Vector3.right * LightDistance * i;
         }
 
         private GameObject AddPAPIPart()

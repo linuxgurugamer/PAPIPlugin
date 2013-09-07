@@ -24,14 +24,5 @@ namespace PAPIPlugin.Interfaces
         ///     Gets or sets the debug mode of the config object.
         /// </summary>
         bool DebugMode { get; set; }
-
-        /// <summary>
-        ///     Releases the resources of the underlying <see cref="ILightArray" /> instances.
-        /// </summary>
-        /// <remarks>
-        ///     The implementation should only call <see cref="ILightArray.Destroy" /> for all contained light arrays it may not
-        ///     change the state of the config object as it isn't initialized sperately later.
-        /// </remarks>
-        void Destroy();
     }
 }

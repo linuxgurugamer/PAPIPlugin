@@ -26,18 +26,12 @@ namespace PAPIPlugin.Impl
 
         public bool DebugMode { get; set; }
 
-        public void Destroy()
-        {
-            foreach (var lightArray in _lightGroups.SelectMany(group => group.LightArrays))
-            {
-                lightArray.Destroy();
-            }
-        }
-
         #endregion
 
         public void LoadConfig()
         {
+            Util.LogInfo("Starting light group parsing...");
+
             foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightGroupNodeName))
             {
                 var lightGroup = CreateLightGroup();

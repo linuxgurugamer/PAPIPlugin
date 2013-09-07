@@ -1,4 +1,6 @@
-﻿namespace PAPIPlugin.Interfaces
+﻿using UnityEngine;
+
+namespace PAPIPlugin.Interfaces
 {
     /// <summary>
     ///     Represents an abstract object which contains some lights of unspecified function. This object will live as long as
@@ -23,7 +25,8 @@
         ///     light array.
         /// </remarks>
         /// <param name="group">The group that contains this array.</param>
-        void Initialize(ILightGroup group);
+        /// <param name="parentObj">The parent object of this light array.</param>
+        void Initialize(ILightGroup group, GameObject parentObj);
 
         /// <summary>
         ///     Called each frame to update the display of the array.
@@ -39,16 +42,5 @@
         ///     again.
         /// </remarks>
         void Destroy();
-
-        /// <summary>
-        ///     Initializes the display within the given array manager.
-        /// </summary>
-        /// <remarks>
-        ///     The implementation should use this function to initialize objects and resources which are used for displaying the
-        ///     light array. This function may be called multiple times but only when <see cref="Destroy" /> has been called
-        ///     before.
-        /// </remarks>
-        /// <param name="arrayManager">The array manager used for this display.</param>
-        void InitializeDisplay(ILightArrayManager arrayManager);
     }
 }

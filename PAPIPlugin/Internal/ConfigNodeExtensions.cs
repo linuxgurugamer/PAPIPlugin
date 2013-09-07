@@ -1,8 +1,8 @@
 ﻿#region Usings
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEngine;
 
 #endregion
 
@@ -10,7 +10,11 @@ namespace PAPIPlugin.Internal
 {
     public static class ConfigNodeExtensions
     {
+        #region Delegates
+
         public delegate bool ConverterDelegate<T>(ConfigNode node, string key, out T value);
+
+        #endregion
 
         public static bool TryConvertValue<T>(this ConfigNode node, string key, out T value, ConverterDelegate<T> converter)
         {
@@ -33,7 +37,7 @@ namespace PAPIPlugin.Internal
 
                 try
                 {
-                    value = (T)typeConverter.ConvertFromInvariantString(stringValue);
+                    value = (T) typeConverter.ConvertFromInvariantString(stringValue);
 
                     return true;
                 }
@@ -48,6 +52,46 @@ namespace PAPIPlugin.Internal
 
         private static ConverterDelegate<T> GetDefaultConverter<T>()
         {
+            if (typeof(T) == typeof(Vector3))
+            {
+                return (ConfigNode node, string key, out T value) =>
+                    {
+                        value = default(T);
+
+                        if (!node.HasValue(key))
+                        {
+                            return false;
+                        }
+
+                        object obj = ConfigNode.ParseVector3(node.GetValue(key));
+
+                        // Little hack to make casting work but this is a safe cast
+                        value = (T) obj;
+
+                        return true;
+                    };
+            }
+
+            if (typeof(T) == typeof(Vector3d))
+            {
+                return (ConfigNode node, string key, out T value) =>
+                    {
+                        value = default(T);
+
+                        if (!node.HasValue(key))
+                        {
+                            return false;
+                        }
+
+                        object obj = ConfigNode.ParseVector3D(node.GetValue(key));
+
+                        // Little hack to make casting work but this is a safe cast
+                        value = (T) obj;
+
+                        return true;
+                    };
+            }
+
             return null;
         }
 

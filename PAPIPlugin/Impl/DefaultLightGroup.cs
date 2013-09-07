@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using PAPIPlugin.Interfaces;
 using PAPIPlugin.Internal;
 
@@ -12,82 +11,9 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightGroup : ILightGroup, IConfigNode
     {
-        private const string LightNodeName = "LightArray";
-
-        private readonly ICollection<ILightArray> _lightArrays = new List<ILightArray>();
+        private readonly ICollection<ILightArray> _lightArrays = new HashSet<ILightArray>();
 
         private readonly IDictionary<Type, ILightTypeManager> _managers = new Dictionary<Type, ILightTypeManager>();
-
-        #region IConfigNode Members
-
-        public void Load(ConfigNode node)
-        {
-            Name = node.GetValue("Name");
-
-            var bodyName = node.GetValue("Body");
-
-            if (string.IsNullOrEmpty(bodyName))
-            {
-                Util.LogWarning(string.Format("The parent body value of light group {0} is missing!", Name ?? "<unnamed>"));
-                return;
-            }
-
-            ParentBody = FlightGlobals.Bodies.FirstOrDefault(body => body.name == bodyName);
-
-            if (ParentBody == null)
-            {
-                Util.LogWarning(string.Format("The parent body {0} of light group {1} could not be found.", bodyName, Name ?? "<unnamed>"));
-                return;
-            }
-
-            Util.LogInfo(string.Format("Found light group {0} on body {1}.", Name ?? "<unnamed>", ParentBody.name));
-
-            var configNodes = node.GetNodes(LightNodeName);
-
-            foreach (var configNode in configNodes)
-            {
-                var arrayType = GetArrayType(configNode);
-
-                if (arrayType == null)
-                {
-                    continue;
-                }
-
-                Util.LogInfo(string.Format("Found array of type {0}.", arrayType.FullName));
-
-                var arrayObject = Activator.CreateInstance(arrayType);
-
-                if (!(arrayObject is ILightArray))
-                {
-                    Util.LogWarning(string.Format("The type {0} is no light array!", arrayType));
-                    continue;
-                }
-
-                var success = ConfigNode.LoadObjectFromConfig(arrayObject, configNode);
-
-                if (success)
-                {
-                    var lightArray = arrayObject as ILightArray;
-
-                    var asConfigNode = lightArray as IConfigNode;
-                    if (asConfigNode != null)
-                    {
-                        asConfigNode.Load(configNode);
-                    }
-
-                    AddArray(lightArray);
-
-                    lightArray.Initialize(this);
-                }
-            }
-        }
-
-        public void Save(ConfigNode node)
-        {
-            throw new NotSupportedException();
-        }
-
-        #endregion
 
         #region ILightGroup Members
 
@@ -95,19 +21,9 @@ namespace PAPIPlugin.Impl
 
         public string Name { get; private set; }
 
-        public CelestialBody ParentBody { get; private set; }
-
         public IEnumerable<ILightArray> LightArrays
         {
             get { return _lightArrays; }
-        }
-
-        public void Update()
-        {
-            foreach (var lightArray in _lightArrays)
-            {
-                lightArray.Update();
-            }
         }
 
         public T GetOrAddTypeManager<T>() where T : ILightTypeManager, new()
@@ -150,15 +66,48 @@ namespace PAPIPlugin.Impl
             }
         }
 
-        public void Destroy()
+        public void AddArray(ILightArray array)
         {
-            foreach (var lightArray in _lightArrays)
+            if (array == null)
             {
-                lightArray.Destroy();
+                throw new ArgumentNullException("array");
             }
+            if (_lightArrays.Contains(array))
+            {
+                return;
+            }
+
+            _lightArrays.Add(array);
+
+            OnLightArrayAdded(new LightArrayEventArguments(array));
+        }
+
+        public bool RemoveArray(ILightArray array)
+        {
+            if (array == null)
+            {
+                return false;
+            }
+
+            return _lightArrays.Remove(array);
         }
 
         #endregion
+
+        public void Load(ConfigNode node)
+        {
+            Name = node.GetValue("Name");
+
+            if (string.IsNullOrEmpty(Name))
+            {
+                Util.LogWarning("No name for light group found!");
+            }
+        }
+
+        public void Save(ConfigNode node)
+        {
+            throw new NotSupportedException();
+        }
 
         protected virtual void OnLightArrayAdded(LightArrayEventArguments e)
         {
@@ -167,60 +116,6 @@ namespace PAPIPlugin.Impl
             {
                 handler(this, e);
             }
-        }
-
-        public void AddArray(ILightArray array)
-        {
-            if (array == null)
-            {
-                throw new ArgumentNullException("array");
-            }
-
-            _lightArrays.Add(array);
-
-            OnLightArrayAdded(new LightArrayEventArguments(array));
-        }
-
-        private static Type GetArrayType(ConfigNode configNode)
-        {
-            var typeName = configNode.GetValue("Type");
-            var namespaceName = configNode.GetValue("Namespace");
-
-            if (string.IsNullOrEmpty(typeName))
-            {
-                Util.LogWarning("Type name is required for light array definition!");
-                return null;
-            }
-
-            Type type;
-
-            if (string.IsNullOrEmpty(namespaceName))
-            {
-                type = AssemblyLoader.loadedAssemblies.SelectMany(asm => asm.assembly.GetTypes()).FirstOrDefault(t => t.Name == typeName);
-
-                if (type == null)
-                {
-                    Util.LogWarning(string.Format("Type name \"{0}\" is not a known type.", typeName));
-                }
-            }
-            else
-            {
-                type =
-                    AssemblyLoader.loadedAssemblies.SelectMany(asm => asm.assembly.GetTypes())
-                        .FirstOrDefault(t => t.Namespace == namespaceName && t.Name == typeName);
-
-                if (type == null)
-                {
-                    Util.LogWarning(string.Format("Type name \"{0}.{1}\" is not a known type.", namespaceName, typeName));
-                }
-            }
-
-            return type;
-        }
-
-        ~DefaultLightGroup()
-        {
-            Destroy();
         }
     }
 }

@@ -65,15 +65,15 @@
     <Compile Include="Impl\DefaultLightGroup.cs" />
     <Compile Include="Interfaces\ILightArray.cs" />
     <Compile Include="Interfaces\ILightArrayConfig.cs" />
-    <Compile Include="Interfaces\ILightArrayManager.cs" />
     <Compile Include="Interfaces\ILightGroup.cs" />
     <Compile Include="Interfaces\ILightTypeManager.cs" />
     <Compile Include="Internal\CelestialBodyExtensions.cs" />
     <Compile Include="Internal\ConfigNodeExtensions.cs" />
     <Compile Include="Internal\ExtensionMethods.cs" />
+    <Compile Include="KerbTownModule.cs" />
+    <Compile Include="LightGUI.cs" />
     <Compile Include="UI\EditableGUIField.cs" />
     <Compile Include="LightArrayEventArguments.cs" />
-    <Compile Include="Impl\DefaultLightArrayManager.cs" />
     <Compile Include="PAPIAddon.cs" />
     <Compile Include="Arrays\PAPIArray.cs" />
     <Compile Include="Impl\PAPITypeManager.cs" />
@@ -81,13 +81,18 @@
     <Compile Include="Internal\Util.cs" />
     <Compile Include="UI\GroupWindow.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\KerbTown\Kerbtown.csproj">
+      <Project>{2d254314-3781-4137-b5e1-dccd03d31e0e}</Project>
+      <Name>Kerbtown</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
 xcopy /Y /I "$(TargetPath)" "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
 
-robocopy "$(SolutionDir)assets/GameData/PAPIPlugin" "$(KSP_PATH)/GameData/PAPIPlugin" /PURGE /e
+robocopy "$(SolutionDir)assets/GameData/PAPIPlugin" "G:\Programme\KSP\TestKSP/GameData/PAPIPlugin" /PURGE /e
 
 cd /d "$(SolutionDir)assets"
 echo %25CD%25

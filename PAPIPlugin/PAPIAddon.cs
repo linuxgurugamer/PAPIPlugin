@@ -1,5 +1,7 @@
 ﻿#region Usings
 
+using System.Diagnostics;
+using System.Linq;
 using PAPIPlugin.Impl;
 using PAPIPlugin.Interfaces;
 using PAPIPlugin.Internal;
@@ -9,53 +11,17 @@ using UnityEngine;
 
 namespace PAPIPlugin
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class PAPIAddon : MonoBehaviour
     {
-        private ILightArrayManager _arrayManager;
-
-        private static ILightArrayConfig _config;
+        public static ILightArrayConfig Config { get; private set; }
 
         public void Awake()
         {
-            if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                enabled = false;
-                return;
-            }
+            var defaultConfig = new DefaultLightArrayConfig();
+            defaultConfig.LoadConfig();
 
-            Util.LogInfo("Awake!");
-
-            _arrayManager = new DefaultLightArrayManager();
-
-            if (_config == null)
-            {
-                _config = _arrayManager.LoadConfig();
-            }
-            else
-            {
-                _arrayManager.LightConfig = _config;
-            }
-        }
-
-        public void Update()
-        {
-            if (_arrayManager != null)
-            {
-                _arrayManager.Update();
-            }
-        }
-
-        public void OnDestroy()
-        {
-            if (_arrayManager == null)
-            {
-                return;
-            }
-
-            Util.LogInfo("OnDestroy!");
-
-            _arrayManager.Dispose();
+            Config = defaultConfig;
         }
     }
 }

@@ -8,17 +8,17 @@ namespace PAPIPlugin.Interfaces
         event EventHandler<LightArrayEventArguments> LightArrayAdded;
 
         string Name { get; }
- 
-        CelestialBody ParentBody { get; }
 
         IEnumerable<ILightArray> LightArrays { get; }
-
-        void Update();
 
         T GetOrAddTypeManager<T>() where T : ILightTypeManager, new();
 
         T GetOrAddTypeManager<T>(Func<T> creatorFunc) where T : ILightTypeManager;
 
         void OnGui(int windowId);
+
+        void AddArray(ILightArray array);
+
+        bool RemoveArray(ILightArray array);
     }
 }

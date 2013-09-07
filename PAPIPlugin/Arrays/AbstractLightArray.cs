@@ -2,6 +2,7 @@
 
 using System;
 using PAPIPlugin.Interfaces;
+using UnityEngine;
 
 #endregion
 
@@ -11,14 +12,13 @@ namespace PAPIPlugin.Arrays
     {
         private bool _enabled;
 
-        protected ILightGroup ParentGroup { get; private set; }
-
-        protected ILightArrayManager ParentManager { get; private set; }
-
         protected AbstractLightArray()
         {
             Enabled = true;
         }
+
+        protected ILightGroup ParentGroup { get; private set; }
+        protected GameObject ParentObject { get; private set; }
 
         #region ILightArray Members
 
@@ -38,21 +38,18 @@ namespace PAPIPlugin.Arrays
             }
         }
 
-        public virtual void Initialize(ILightGroup group)
+        public virtual void Initialize(ILightGroup group, GameObject parentObj)
         {
             ParentGroup = group;
+            ParentObject = parentObj;
         }
 
         public abstract void Update();
 
         public virtual void Destroy()
         {
-            ParentManager = null;
-        }
-
-        public virtual void InitializeDisplay(ILightArrayManager arrayManager)
-        {
-            ParentManager = arrayManager;
+            ParentGroup.RemoveArray(this);
+            ParentGroup = null;
         }
 
         #endregion
