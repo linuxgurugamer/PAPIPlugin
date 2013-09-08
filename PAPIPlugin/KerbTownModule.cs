@@ -17,7 +17,6 @@ namespace PAPIPlugin
 
         public void Awake()
         {
-            Util.LogInfo("Awake...");
             _lightArrays = new List<ILightArray>();
         }
 
@@ -39,8 +38,6 @@ namespace PAPIPlugin
 
         public void Load(ConfigNode node)
         {
-            Util.LogInfo("Loading...");
-
             foreach (var lightNode in node.GetNodes("LightArray"))
             {
                 var arrayType = GetArrayType(lightNode);
@@ -79,8 +76,9 @@ namespace PAPIPlugin
                     if (group != null)
                     {
                         group.AddArray(lightArray);
-                        lightArray.Initialize(group, gameObject);
                     }
+
+                    lightArray.Initialize(group, gameObject);
                 }
             }
         }
