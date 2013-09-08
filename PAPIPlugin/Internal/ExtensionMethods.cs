@@ -1,7 +1,7 @@
 ﻿#region Usings
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 
 #endregion
 
@@ -22,17 +22,62 @@ namespace PAPIPlugin.Internal
                 outVal = lower;
 
                 Util.LogWarning(string.Format("Clamped value \"{0}\" to \"{1}\" because it is out of bounds for the range of [{2}, {3}].", val, lower,
-                    lower, upper));
+                                              lower, upper));
             }
             else if (val.CompareTo(upper) > 0)
             {
                 outVal = upper;
 
                 Util.LogWarning(string.Format("Clamped value \"{0}\" to \"{1}\" because it is out of bounds for the range of [{2}, {3}].", val, upper,
-                    lower, upper));
+                                              lower, upper));
             }
 
             return outVal;
+        }
+
+        public static string SafeToString(this object obj)
+        {
+            return obj == null ? "null" : obj.ToString();
+        }
+
+        public static IList<T> Fill<T>(this IList<T> list, Func<T> creator)
+        {
+            if (list == null)
+            {
+                return null;
+            }
+
+            if (creator == null)
+            {
+                creator = () => default(T);
+            }
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                list[i] = creator();
+            }
+
+            return list;
+        }
+
+        public static IList<T> Fill<T>(this IList<T> list, Func<int, T> creator)
+        {
+            if (list == null)
+            {
+                return null;
+            }
+
+            if (creator == null)
+            {
+                creator = i => default(T);
+            }
+
+            for (var i = 0; i < list.Count; i++)
+            {
+                list[i] = creator(i);
+            }
+
+            return list;
         }
     }
 }
