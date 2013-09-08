@@ -116,7 +116,10 @@ namespace PAPIPlugin.Arrays
 
             base.Initialize(@group, parentObject);
 
-            @group.GetOrAddTypeManager<PAPITypeManager>();
+            if (group != null)
+            {
+                group.GetOrAddTypeManager<PAPITypeManager>();
+            }
 
             InitializePAPIParts(parentObject);
         }
