@@ -6,17 +6,17 @@ namespace PAPIPlugin.Internal
     {
         public static void LogInfo(object msg)
         {
-            Debug.Log("PAPIPlugin: " + msg);
+            Debug.Log("PAPIPlugin: " + msg.SafeToString());
         }
 
         public static void LogWarning(object msg)
         {
-            Debug.LogWarning("PAPIPlugin: " + msg);
+            Debug.LogWarning("PAPIPlugin: " + msg.SafeToString());
         }
 
         public static void LogError(object msg)
         {
-            Debug.LogError("PAPIPlugin: " + msg);
+            Debug.LogError("PAPIPlugin: " + msg.SafeToString());
         }
     }
 }
