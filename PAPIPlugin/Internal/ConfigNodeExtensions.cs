@@ -92,6 +92,26 @@ namespace PAPIPlugin.Internal
                     };
             }
 
+            if (typeof(T) == typeof(Color))
+            {
+                return (ConfigNode node, string key, out T value) =>
+                {
+                    value = default(T);
+
+                    if (!node.HasValue(key))
+                    {
+                        return false;
+                    }
+
+                    object obj = ConfigNode.ParseColor(node.GetValue(key));
+
+                    // Little hack to make casting work but this is a safe cast
+                    value = (T)obj;
+
+                    return true;
+                };
+            }
+
             return null;
         }
 
