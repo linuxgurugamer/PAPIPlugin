@@ -61,12 +61,15 @@
       <Link>TacLib\Window.cs</Link>
     </Compile>
     <Compile Include="Arrays\AbstractLightArray.cs" />
+    <Compile Include="Arrays\AbstractMultiArray.cs" />
+    <Compile Include="Arrays\StaticLightArray.cs" />
     <Compile Include="Impl\DefaultLightArrayConfig.cs" />
     <Compile Include="Impl\DefaultLightGroup.cs" />
     <Compile Include="Interfaces\ILightArray.cs" />
     <Compile Include="Interfaces\ILightArrayConfig.cs" />
     <Compile Include="Interfaces\ILightGroup.cs" />
     <Compile Include="Interfaces\ILightTypeManager.cs" />
+    <Compile Include="Interfaces\IStaticLightArray.cs" />
     <Compile Include="Internal\CelestialBodyExtensions.cs" />
     <Compile Include="Internal\ConfigNodeExtensions.cs" />
     <Compile Include="Internal\ExtensionMethods.cs" />
