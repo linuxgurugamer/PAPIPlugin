@@ -76,7 +76,7 @@ namespace PAPIPlugin.Arrays
         {
             base.Update();
 
-            var currentCamera = Camera.main;
+            var currentCamera = FlightCamera.fetch.mainCamera;
 
             if (currentCamera == null)
             {
