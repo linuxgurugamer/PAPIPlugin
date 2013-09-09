@@ -15,6 +15,20 @@ namespace PAPIPlugin
     {
         private IList<ILightArray> _lightArrays;
 
+        public override bool Enabled
+        {
+            get { return base.Enabled; }
+            set
+            {
+                base.Enabled = value;
+
+                if (_lightArrays != null)
+                {
+                    _lightArrays.ForEach(array => array.Enabled = value);
+                }
+            }
+        }
+
         public void Awake()
         {
             _lightArrays = new List<ILightArray>();
