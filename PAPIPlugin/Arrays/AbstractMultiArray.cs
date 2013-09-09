@@ -28,6 +28,25 @@ namespace PAPIPlugin.Arrays
 
         protected int LightCount { get; set; }
 
+        public override bool Enabled
+        {
+            set
+            {
+                base.Enabled = value;
+
+                if (_lightArrays != null)
+                {
+                    _lightArrays.ForEach(array => array.Enabled = value);
+                }
+
+                if (_lightGameObjects != null)
+                {
+                    _lightGameObjects.ForEach(obj => obj.SetActive(value));
+                }
+            }
+            protected get { return base.Enabled; }
+        }
+
         public override void Initialize(ILightGroup @group, GameObject parentObj)
         {
             _arrayObject = new GameObject();

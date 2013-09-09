@@ -8,6 +8,8 @@ namespace PAPIPlugin.Interfaces
     /// </summary>
     public interface ILightArray
     {
+        bool Enabled { set; }
+
         /// <summary>
         ///     Initializes the array with the given parent group.
         /// </summary>
