@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace PAPIPlugin.Arrays
 {
-    public class PAPIArray : AbstractMultiArray<IStaticLightArray>, IConfigNode
+    public class PAPIArray : AbstractMultiArray<IStaticLightArray>
     {
         public const float DefaultLightRadius = 10.0f;
 
@@ -20,6 +20,8 @@ namespace PAPIPlugin.Arrays
         ///     If the difference of the gliepath from the target is more than this the whole array will show either red or white.
         /// </summary>
         public const double DefaultGlideslopeTolerance = 1.5;
+
+        private const string ModelUrl = "PAPIPlugin/Models/papi/model";
 
         public PAPIArray()
         {
@@ -35,17 +37,62 @@ namespace PAPIPlugin.Arrays
 
         protected override GameObject CreateLightDisplay()
         {
+            // We need to return an object which does not rely on rotations
+            var retObject = new GameObject();
+            retObject.transform.localPosition = Vector3.zero;
+            retObject.transform.localEulerAngles = Vector3.zero;
+
+            var papiModel = SetupPapiModel();
+            papiModel.transform.parent = retObject.transform;
+
             var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
-            var material = new Material(Shader.Find("Particles/Additive"));
+            var material = new Material(Util.GetFileContents("FlareShader.shader"));
             obj.renderer.sharedMaterial = material;
 
-            obj.transform.localScale = new Vector3(LightRadius, LightRadius, LightRadius);
+            obj.renderer.receiveShadows = false;
+            obj.renderer.castShadows = false;
+
+            obj.transform.parent = retObject.transform;
+            obj.transform.localPosition = Vector3.forward * 3;
+            obj.transform.localScale = new Vector3(2, 2, 2);
 
             var sphereCollider = obj.GetComponent<SphereCollider>();
             sphereCollider.enabled = false;
 
-            return obj;
+            return retObject;
+        }
+
+        private static GameObject SetupPapiModel()
+        {
+            var containerObject = new GameObject();
+
+            var papiModel = GameDatabase.Instance.GetModel(ModelUrl);
+            papiModel.SetActive(true);
+
+            // Set correct layer for kerbal collision
+            papiModel.SetLayerRecursively(15);
+
+            papiModel.transform.parent = containerObject.transform;
+            papiModel.transform.localRotation = Quaternion.LookRotation(Vector3.up);
+            papiModel.transform.localPosition = Vector3.zero;
+
+            SetupPapiLods(containerObject, papiModel);
+
+            return containerObject;
+        }
+
+        private static void SetupPapiLods(GameObject containerObject, GameObject papiModel)
+        {
+            var lodGroup = containerObject.AddComponent<LODGroup>();
+
+            var papiRenderer = papiModel.renderer;
+
+            var lods = new LOD[1];
+            lods[0] = new LOD(0.001f, new[] {papiRenderer});
+
+            lodGroup.SetLODS(lods);
+            lodGroup.RecalculateBounds();
         }
 
         public override void Initialize(ILightGroup @group, GameObject parentObj)
@@ -115,7 +162,7 @@ namespace PAPIPlugin.Arrays
         {
             if (_lightArrays == null)
             {
-                _lightGameObjects[index].renderer.material.SetColor("_TintColor", color);
+                _lightGameObjects[index].GetComponentsInChildren<Renderer>().ForEach(renderer => renderer.material.SetColor("_Color", color));
             }
             else
             {
@@ -129,6 +176,7 @@ namespace PAPIPlugin.Arrays
             {
                 return Color.red;
             }
+
             if (difference > GlideslopeTolerance)
             {
                 return Color.white;

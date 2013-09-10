@@ -18,5 +18,10 @@ namespace PAPIPlugin.Internal
         {
             Debug.LogError("PAPIPlugin: " + msg.SafeToString());
         }
+
+        public static string GetFileContents(string name)
+        {
+            return KSP.IO.File.ReadAllText<Util>(name);
+        }
     }
 }

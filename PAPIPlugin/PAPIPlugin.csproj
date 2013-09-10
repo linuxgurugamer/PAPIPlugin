@@ -73,6 +73,7 @@
     <Compile Include="Internal\CelestialBodyExtensions.cs" />
     <Compile Include="Internal\ConfigNodeExtensions.cs" />
     <Compile Include="Internal\ExtensionMethods.cs" />
+    <Compile Include="Internal\GameObjectExtensions.cs" />
     <Compile Include="KerbTownModule.cs" />
     <Compile Include="LightGUI.cs" />
     <Compile Include="UI\EditableGUIField.cs" />
