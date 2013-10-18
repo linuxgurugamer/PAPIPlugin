@@ -23,6 +23,10 @@ namespace PAPIPlugin.Impl
 
         private bool _guiInitialized = false;
 
+        private double _initialGlideslopeValue = PAPIArray.DefaultTargetGlidePath;
+
+        private double _initialTargetGlideslopeValue = PAPIArray.DefaultGlideslopeTolerance;
+
         #region ILightTypeManager Members
 
         public void Initialize(ILightGroup group)
@@ -31,26 +35,33 @@ namespace PAPIPlugin.Impl
 
             foreach (var lightArray in group.LightArrays.OfType<PAPIArray>())
             {
-                Util.LogInfo(lightArray);
                 _papiArrays.Add(lightArray);
+
+                _initialTargetGlideslopeValue = lightArray.GlideslopeTolerance;
+                _initialGlideslopeValue = lightArray.TargetGlideslope;
             }
 
             group.LightArrayAdded += (sender, arguments) =>
-            {
-                var papi = arguments.Array as PAPIArray;
-                if (papi != null)
                 {
+                    var papi = arguments.Array as PAPIArray;
+                    if (papi == null)
+                    {
+                        return;
+                    }
+
                     _papiArrays.Add(papi);
-                }
-            };
+
+                    _initialTargetGlideslopeValue = papi.GlideslopeTolerance;
+                    _initialGlideslopeValue = papi.TargetGlideslope;
+                };
         }
 
         public void OnGui(int windowID)
         {
             if (!_guiInitialized)
             {
-                _glideslopeField = new EditableGUIField<double>(PAPIArray.DefaultTargetGlidePath, DoubleConvertDelegate);
-                _glideslopeToleranceField = new EditableGUIField<double>(PAPIArray.DefaultGlideslopeTolerance, DoubleConvertDelegate);
+                _glideslopeField = new EditableGUIField<double>(_initialGlideslopeValue, DoubleConvertDelegate);
+                _glideslopeToleranceField = new EditableGUIField<double>(_initialTargetGlideslopeValue, DoubleConvertDelegate);
 
                 _guiInitialized = true;
             }
@@ -63,7 +74,7 @@ namespace PAPIPlugin.Impl
 
         #endregion
 
-        private void DoDegreeField<T>(string name, EditableGUIField<T> field)
+        private static void DoDegreeField<T>(string name, EditableGUIField<T> field)
         {
             GUILayout.BeginHorizontal();
             {
