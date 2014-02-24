@@ -118,7 +118,7 @@ namespace PAPIPlugin.Arrays
                 return;
             }
 
-            var currentCamera = Camera.main;
+            var currentCamera = HighLogic.LoadedSceneIsFlight ? FlightCamera.fetch.mainCamera : Camera.main;
 
             if (currentCamera == null)
             {
