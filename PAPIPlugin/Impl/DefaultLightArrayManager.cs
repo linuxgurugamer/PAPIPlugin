@@ -15,7 +15,7 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayManager : ILightArrayManager
     {
-        private readonly Icon<DefaultLightArrayManager> _groupWindowIcon;
+        private ApplicationLauncherButton _appButtonStock;
 
         private GroupWindow<ILightArrayConfig> _groupWindow;
 
@@ -23,9 +23,7 @@ namespace PAPIPlugin.Impl
 
         public DefaultLightArrayManager()
         {
-            _groupWindowIcon = new Icon<DefaultLightArrayManager>(new Rect(Screen.width * 0.8f, 0.0f, 80.0f, 20.0f), "icon.png", "Light groups",
-                "Opens the light group overview", OnIconClickHandler);
-            _groupWindowIcon.SetVisible(true);
+            GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
         }
 
         #region ILightArrayManager Members
@@ -82,6 +80,25 @@ namespace PAPIPlugin.Impl
 
         #endregion
 
+        private void OnGUIAppLauncherReady()
+        {
+            if (ApplicationLauncher.Ready)
+            {
+                _appButtonStock = ApplicationLauncher.Instance.AddModApplication(
+                    OnIconClickHandler,
+                    OnIconClickHandler,
+                    DummyVoid,
+                    DummyVoid,
+                    DummyVoid,
+                    DummyVoid,
+                    ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.SPACECENTER,
+                    (Texture)GameDatabase.Instance.GetTexture("PAPIPlugin/icon_button", false)
+                );
+            }
+        }
+
+        private void DummyVoid() { }
+
         private void OnIconClickHandler()
         {
             if (_groupWindow == null)
@@ -93,6 +110,9 @@ namespace PAPIPlugin.Impl
             {
                 _groupWindow.ToggleVisible();
             }
+
+            // Don't lock highlight on the button since it's just a toggle
+            _appButtonStock.SetFalse(false);
         }
 
         private void InitializeConfig(ILightArrayConfig lightConfig)
@@ -121,7 +141,9 @@ namespace PAPIPlugin.Impl
         {
             LightConfig.Destroy();
 
-            _groupWindowIcon.SetVisible(false);
+            GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+            if (_appButtonStock != null)
+                ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
 
             if (_groupWindow != null)
             {
