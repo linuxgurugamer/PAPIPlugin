@@ -36,6 +36,8 @@ namespace PAPIPlugin
             {
                 _arrayManager.LightConfig = _config;
             }
+
+            _arrayManager.InitializeButton();
         }
 
         public void Update()

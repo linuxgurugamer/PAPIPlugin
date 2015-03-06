@@ -26,6 +26,11 @@ namespace PAPIPlugin.Interfaces
         bool DebugMode { get; set; }
 
         /// <summary>
+        ///     Use blizzy78's toolbar, if possible
+        /// </summary>
+        bool UseBlizzy78Toolbar { get; set; }
+
+        /// <summary>
         ///     Releases the resources of the underlying <see cref="ILightArray" /> instances.
         /// </summary>
         /// <remarks>
