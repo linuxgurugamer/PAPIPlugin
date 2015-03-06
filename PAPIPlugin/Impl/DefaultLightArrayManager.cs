@@ -15,7 +15,9 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayManager : ILightArrayManager
     {
-        private readonly Icon<DefaultLightArrayManager> _groupWindowIcon;
+        private ApplicationLauncherButton _appButtonStock = null;
+
+        private IButton _blizzy78Button = null;
 
         private GroupWindow<ILightArrayConfig> _groupWindow;
 
@@ -23,9 +25,6 @@ namespace PAPIPlugin.Impl
 
         public DefaultLightArrayManager()
         {
-            _groupWindowIcon = new Icon<DefaultLightArrayManager>(new Rect(Screen.width * 0.8f, 0.0f, 80.0f, 20.0f), "icon.png", "Light groups",
-                "Opens the light group overview", OnIconClickHandler);
-            _groupWindowIcon.SetVisible(true);
         }
 
         #region ILightArrayManager Members
@@ -67,6 +66,18 @@ namespace PAPIPlugin.Impl
             return LightConfig;
         }
 
+        public void InitializeButton()
+        {
+            if (LightConfig != null && LightConfig.UseBlizzy78Toolbar && ToolbarManager.ToolbarAvailable)
+            {
+                AddBlizzy78ToolbarButton();
+            }
+            else
+            {
+                GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+            }
+        }
+
         public void Update()
         {
             foreach (var lightGroup in LightConfig.LightArrayGroups)
@@ -82,6 +93,37 @@ namespace PAPIPlugin.Impl
 
         #endregion
 
+        private void OnGUIAppLauncherReady()
+        {
+            if (ApplicationLauncher.Ready)
+            {
+                _appButtonStock = ApplicationLauncher.Instance.AddModApplication(
+                    OnIconClickHandler,
+                    OnIconClickHandler,
+                    DummyVoid,
+                    DummyVoid,
+                    DummyVoid,
+                    DummyVoid,
+                    ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.SPACECENTER,
+                    (Texture)GameDatabase.Instance.GetTexture("PAPIPlugin/icon_button", false)
+                );
+            }
+        }
+
+        private void AddBlizzy78ToolbarButton()
+        {
+            if (_blizzy78Button == null)
+            {
+                _blizzy78Button = ToolbarManager.Instance.add("PAPIPlugin", "PAPIPluginSetting");
+                _blizzy78Button.TexturePath = "PAPIPlugin/icon_button24";
+                _blizzy78Button.ToolTip = "PAPIPlugin Setting";
+                _blizzy78Button.Visibility = new GameScenesVisibility(GameScenes.FLIGHT, GameScenes.SPACECENTER);
+                _blizzy78Button.OnClick += (e) => OnIconClickHandler();
+            }
+        }
+
+        private void DummyVoid() { }
+
         private void OnIconClickHandler()
         {
             if (_groupWindow == null)
@@ -92,6 +134,12 @@ namespace PAPIPlugin.Impl
             else
             {
                 _groupWindow.ToggleVisible();
+            }
+
+            if ((LightConfig != null && !LightConfig.UseBlizzy78Toolbar) || !ToolbarManager.ToolbarAvailable)
+            {
+                // Don't lock highlight on the button since it's just a toggle
+                _appButtonStock.SetFalse(false);
             }
         }
 
@@ -121,7 +169,23 @@ namespace PAPIPlugin.Impl
         {
             LightConfig.Destroy();
 
-            _groupWindowIcon.SetVisible(false);
+            if (LightConfig != null && LightConfig.UseBlizzy78Toolbar && ToolbarManager.ToolbarAvailable)
+            {
+                if (_blizzy78Button != null)
+                {
+                    _blizzy78Button.Destroy();
+                    _blizzy78Button = null;
+                }
+            }
+            else
+            {
+                GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
+                if (_appButtonStock != null)
+                {
+                    ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
+                    _appButtonStock = null;
+                }
+            }
 
             if (_groupWindow != null)
             {

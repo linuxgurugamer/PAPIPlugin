@@ -26,6 +26,8 @@ namespace PAPIPlugin.Impl
 
         public bool DebugMode { get; set; }
 
+        public bool UseBlizzy78Toolbar { get; set; }
+
         public void Destroy()
         {
             foreach (var lightArray in _lightGroups.SelectMany(group => group.LightArrays))
@@ -61,6 +63,7 @@ namespace PAPIPlugin.Impl
             foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightConfigNodeName))
             {
                 DebugMode = configNode.ConvertValue("Debug", false);
+                UseBlizzy78Toolbar = configNode.ConvertValue("UseBlizzy78Toolbar", false);
             }
         }
 

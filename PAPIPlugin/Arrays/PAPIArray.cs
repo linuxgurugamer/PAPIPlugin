@@ -127,6 +127,13 @@ namespace PAPIPlugin.Arrays
 
             var relativePosition = _papiGameObject.transform.InverseTransformPoint(currentCamera.transform.position);
 
+            var activeVessel = FlightGlobals.ActiveVessel;
+
+            if (activeVessel != null)
+            {
+                relativePosition = _papiGameObject.transform.InverseTransformPoint(activeVessel.GetWorldPos3D());
+            }
+
             var normalizedPosition = relativePosition.normalized;
             // As the local normal is (0, 1, 0), y is the result of normal * normalizedPosition.
             var normalDot = normalizedPosition.y;

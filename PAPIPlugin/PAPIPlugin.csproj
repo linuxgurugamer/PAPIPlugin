@@ -36,14 +36,14 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>G:\Programme\KSP\0.21\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>$(KSP_PATH)/KSP_Data/Managed/Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>G:\Programme\KSP\0.21\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>$(KSP_PATH)/KSP_Data/Managed/UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -80,20 +80,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\Util.cs" />
     <Compile Include="UI\GroupWindow.cs" />
+    <Compile Include="UI\ToolbarWrapper.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
 xcopy /Y /I "$(TargetPath)" "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
-
-robocopy "$(SolutionDir)assets/GameData/PAPIPlugin" "$(KSP_PATH)/GameData/PAPIPlugin" /PURGE /e
-
-cd /d "$(SolutionDir)assets"
-echo %25CD%25
-del "PAPIPlugin.zip"
-7z a -r -tzip -y "PAPIPlugin.zip" "GameData"
-
 exit 0</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

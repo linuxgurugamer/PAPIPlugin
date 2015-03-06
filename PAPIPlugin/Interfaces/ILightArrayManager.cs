@@ -14,6 +14,8 @@ namespace PAPIPlugin.Interfaces
 
         ILightArrayConfig LoadConfig();
 
+        void InitializeButton();
+
         void Update();
     }
 }
