@@ -68,6 +68,15 @@ namespace PAPIPlugin.Impl
             return LightConfig;
         }
 
+        public void SaveConfig()
+        {
+            if (LightConfig != null)
+            {
+                var config = LightConfig as DefaultLightArrayConfig;
+                config.SaveConfig();
+            }
+        }
+
         public void InitializeButton()
         {
             if (LightConfig != null && LightConfig.UseBlizzy78Toolbar && ToolbarManager.ToolbarAvailable)
@@ -138,6 +147,7 @@ namespace PAPIPlugin.Impl
                         _groupWindow = null;
                         AllLightConfigReloaded(this, e);
                     };
+                _groupWindow.AllLightConfigSaved += (sender, e) => SaveConfig();
                 _groupWindow.SetVisible(true);
             }
             else

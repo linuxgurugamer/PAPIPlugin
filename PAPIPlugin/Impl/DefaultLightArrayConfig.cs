@@ -1,5 +1,6 @@
 ﻿#region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PAPIPlugin.Interfaces;
@@ -65,6 +66,48 @@ namespace PAPIPlugin.Impl
                 DebugMode = configNode.ConvertValue("Debug", false);
                 UseBlizzy78Toolbar = configNode.ConvertValue("UseBlizzy78Toolbar", false);
             }
+        }
+
+        public void SaveConfig()
+        {
+            var configNode = new ConfigNode();
+            configNode.name = "PAPIPlugin";
+
+            foreach (var lightGroup in _lightGroups)
+            {
+                var groupConfigNode = new ConfigNode();
+                groupConfigNode.name = "LightGroup";
+
+                groupConfigNode.AddValue("Name", lightGroup.Name);
+                groupConfigNode.AddValue("Body", lightGroup.ParentBody.name);
+
+                foreach (var lightArray in lightGroup.LightArrays)
+                {
+                    var papi = lightArray as PAPIPlugin.Arrays.PAPIArray;
+
+                    var arrayConfigNode = new ConfigNode();
+                    arrayConfigNode.name = "LightArray";
+
+                    arrayConfigNode.AddValue("Type", lightArray.GetType().Name);
+                    arrayConfigNode.AddValue("Namespace", lightArray.GetType().Namespace);
+
+                    arrayConfigNode.AddValue("Latitude", papi.Latitude);
+                    arrayConfigNode.AddValue("Longitude", papi.Longitude);
+
+                    arrayConfigNode.AddValue("Heading", papi.Heading * 180 / Math.PI);
+
+                    arrayConfigNode.AddValue("GlideslopeTolerance", papi.GlideslopeTolerance);
+                    arrayConfigNode.AddValue("TargetGlideslope", papi.TargetGlideslope);
+                    arrayConfigNode.AddValue("HeightAboveTerrain", papi.HeightAboveTerrain);
+                    arrayConfigNode.AddValue("PartCount", papi.PartCount);
+                    arrayConfigNode.AddValue("LightRadius", papi.LightRadius);
+                    arrayConfigNode.AddValue("LightDistance", papi.LightDistance);
+
+                    groupConfigNode.AddNode(arrayConfigNode);
+                }
+                configNode.AddNode(groupConfigNode);
+            }
+            configNode.Save(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/lights.cfg", "PAPIPlugin");
         }
 
         protected virtual ILightGroup CreateLightGroup()
