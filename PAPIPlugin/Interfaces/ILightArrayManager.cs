@@ -10,6 +10,8 @@ namespace PAPIPlugin.Interfaces
     {
         event EventHandler ParsingFinished;
 
+        event EventHandler AllLightConfigReloaded;
+
         ILightArrayConfig LightConfig { get; set; }
 
         ILightArrayConfig LoadConfig();

@@ -1,5 +1,6 @@
 ﻿#region Usings
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using PAPIPlugin.Interfaces;
@@ -19,6 +20,12 @@ namespace PAPIPlugin.UI
 
         private GUIStyle _toggleStyle;
 
+        private GUIStyle _buttonStyle;
+
+        public event EventHandler AllLightConfigSaved;
+
+        public event EventHandler AllLightConfigReloaded;
+
         public GroupWindow(T arrayConfig) : base("Group configuration", 400, 200)
         {
             _arrayConfig = arrayConfig;
@@ -35,6 +42,18 @@ namespace PAPIPlugin.UI
                     alignment = TextAnchor.MiddleCenter,
                     fontStyle = FontStyle.Normal,
                     padding = {top = 4, bottom = 4},
+                    stretchWidth = true,
+                    stretchHeight = false
+                };
+            }
+
+            if (_buttonStyle == null)
+            {
+                _buttonStyle = new GUIStyle(GUI.skin.button)
+                {
+                    alignment = TextAnchor.MiddleCenter,
+                    fontStyle = FontStyle.Normal,
+                    padding = { top = 4, bottom = 4 },
                     stretchWidth = true,
                     stretchHeight = false
                 };
@@ -59,6 +78,19 @@ namespace PAPIPlugin.UI
 
                 _toggleState[lightGroup.Name] = newVal;
             }
+
+            GUILayout.BeginHorizontal();
+            {
+                if (GUILayout.Button("Save All", _buttonStyle))
+                {
+                    AllLightConfigSaved(this, null);
+                }
+                if (GUILayout.Button("Reload All", _buttonStyle))
+                {
+                    AllLightConfigReloaded(this, null);
+                }
+            }
+            GUILayout.EndHorizontal();
         }
     }
 }

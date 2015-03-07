@@ -69,11 +69,13 @@ namespace PAPIPlugin.Arrays
 
         #region IConfigNode Members
 
+        public static PositionDecision positionDecision = PositionDecision.Auto;
+
         public void Load(ConfigNode node)
         {
             GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultGlideslopeTolerance);
             TargetGlideslope = node.ConvertValue("TargetGlideslope", DefaultTargetGlidePath);
-            HeightAboveTerrain = node.ConvertValue("Height", 0);
+            HeightAboveTerrain = node.ConvertValue("HeightAboveTerrain", 0);
             PartCount = node.ConvertValue("PartCount", DefaultPartCount);
             LightRadius = node.ConvertValue("LightRadius", DefaultLightRadius);
             LightDistance = node.ConvertValue("LightDistance", LightRadius * 0.5f);
@@ -131,7 +133,11 @@ namespace PAPIPlugin.Arrays
 
             if (activeVessel != null)
             {
-                relativePosition = _papiGameObject.transform.InverseTransformPoint(activeVessel.GetWorldPos3D());
+                if ((positionDecision == PositionDecision.Vessel) ||
+                        (positionDecision == PositionDecision.Auto && (InternalCamera.Instance == null || !InternalCamera.Instance.isActive)))
+                {
+                    relativePosition = _papiGameObject.transform.InverseTransformPoint(activeVessel.GetWorldPos3D());
+                }
             }
 
             var normalizedPosition = relativePosition.normalized;

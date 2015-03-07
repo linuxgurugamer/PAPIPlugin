@@ -61,6 +61,7 @@
       <Link>TacLib\Window.cs</Link>
     </Compile>
     <Compile Include="Arrays\AbstractLightArray.cs" />
+    <Compile Include="PositionDecision.cs" />
     <Compile Include="Impl\DefaultLightArrayConfig.cs" />
     <Compile Include="Impl\DefaultLightGroup.cs" />
     <Compile Include="Interfaces\ILightArray.cs" />
@@ -86,8 +87,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
-xcopy /Y /I "$(TargetPath)" "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"
-exit 0</PostBuildEvent>
+xcopy /Y /I "$(TargetPath)" "$(SolutionDir)assets/GameData/PAPIPlugin/Plugins"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
