@@ -27,6 +27,7 @@ namespace PAPIPlugin
             Util.LogInfo("Awake!");
 
             _arrayManager = new DefaultLightArrayManager();
+            _arrayManager.AllLightConfigReloaded += (sender, e) => _config = _arrayManager.LightConfig;
 
             if (_config == null)
             {

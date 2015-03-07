@@ -31,6 +31,8 @@ namespace PAPIPlugin.Impl
 
         public event EventHandler ParsingFinished;
 
+        public event EventHandler AllLightConfigReloaded;
+
         public ILightArrayConfig LightConfig
         {
             get { return _lightConfig; }
@@ -129,6 +131,13 @@ namespace PAPIPlugin.Impl
             if (_groupWindow == null)
             {
                 _groupWindow = new GroupWindow<ILightArrayConfig>(LightConfig);
+                _groupWindow.AllLightConfigReloaded += (sender, e) =>
+                    {
+                        LoadConfig();
+                        _groupWindow.SetVisible(false);
+                        _groupWindow = null;
+                        AllLightConfigReloaded(this, e);
+                    };
                 _groupWindow.SetVisible(true);
             }
             else
