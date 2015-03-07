@@ -73,7 +73,7 @@ namespace PAPIPlugin.Arrays
         {
             GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultGlideslopeTolerance);
             TargetGlideslope = node.ConvertValue("TargetGlideslope", DefaultTargetGlidePath);
-            HeightAboveTerrain = node.ConvertValue("Height", 0);
+            HeightAboveTerrain = node.ConvertValue("HeightAboveTerrain", 0);
             PartCount = node.ConvertValue("PartCount", DefaultPartCount);
             LightRadius = node.ConvertValue("LightRadius", DefaultLightRadius);
             LightDistance = node.ConvertValue("LightDistance", LightRadius * 0.5f);
