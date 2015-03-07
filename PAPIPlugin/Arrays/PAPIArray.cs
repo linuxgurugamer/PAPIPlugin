@@ -69,6 +69,8 @@ namespace PAPIPlugin.Arrays
 
         #region IConfigNode Members
 
+        public static PositionDecision positionDecision = PositionDecision.Auto;
+
         public void Load(ConfigNode node)
         {
             GlideslopeTolerance = node.ConvertValue("GlideslopeTolerance", DefaultGlideslopeTolerance);
@@ -131,7 +133,11 @@ namespace PAPIPlugin.Arrays
 
             if (activeVessel != null)
             {
-                relativePosition = _papiGameObject.transform.InverseTransformPoint(activeVessel.GetWorldPos3D());
+                if ((positionDecision == PositionDecision.Vessel) ||
+                        (positionDecision == PositionDecision.Auto && (InternalCamera.Instance == null || !InternalCamera.Instance.isActive)))
+                {
+                    relativePosition = _papiGameObject.transform.InverseTransformPoint(activeVessel.GetWorldPos3D());
+                }
             }
 
             var normalizedPosition = relativePosition.normalized;

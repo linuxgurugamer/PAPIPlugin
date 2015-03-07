@@ -31,6 +31,12 @@ namespace PAPIPlugin.Interfaces
         bool UseBlizzy78Toolbar { get; set; }
 
         /// <summary>
+        ///     Use carera / vessel position as relative position.
+        ///     "Auto" means use camera position in IVA, use vessel position in flight.
+        /// </summary>
+        PositionDecision positionDecision { get; set; }
+
+        /// <summary>
         ///     Releases the resources of the underlying <see cref="ILightArray" /> instances.
         /// </summary>
         /// <remarks>

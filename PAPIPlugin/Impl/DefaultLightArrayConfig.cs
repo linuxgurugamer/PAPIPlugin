@@ -29,6 +29,8 @@ namespace PAPIPlugin.Impl
 
         public bool UseBlizzy78Toolbar { get; set; }
 
+        public PositionDecision positionDecision { get; set; }
+
         public void Destroy()
         {
             foreach (var lightArray in _lightGroups.SelectMany(group => group.LightArrays))
@@ -65,7 +67,9 @@ namespace PAPIPlugin.Impl
             {
                 DebugMode = configNode.ConvertValue("Debug", false);
                 UseBlizzy78Toolbar = configNode.ConvertValue("UseBlizzy78Toolbar", false);
+                positionDecision = configNode.ConvertValue("PositionDecision", PositionDecision.Auto);
             }
+            PAPIPlugin.Arrays.PAPIArray.positionDecision = positionDecision;
         }
 
         public void SaveConfig()
