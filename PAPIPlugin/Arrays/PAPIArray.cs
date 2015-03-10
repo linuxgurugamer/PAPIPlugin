@@ -122,11 +122,10 @@ namespace PAPIPlugin.Arrays
 
             var currentCamera = HighLogic.LoadedSceneIsFlight ? FlightCamera.fetch.mainCamera : Camera.main;
 
-            if (currentCamera == null)
+            if (currentCamera == null || _papiGameObject == null)
             {
                 return;
             }
-
             var relativePosition = _papiGameObject.transform.InverseTransformPoint(currentCamera.transform.position);
 
             var activeVessel = FlightGlobals.ActiveVessel;
