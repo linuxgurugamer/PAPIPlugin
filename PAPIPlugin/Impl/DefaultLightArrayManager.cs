@@ -85,7 +85,10 @@ namespace PAPIPlugin.Impl
             }
             else
             {
-                GameEvents.onGUIApplicationLauncherReady.Add(OnGUIAppLauncherReady);
+                if (_appButtonStock == null)
+                {
+                    OnGUIAppLauncherReady();
+                }
             }
         }
 
