@@ -201,7 +201,6 @@ namespace PAPIPlugin.Impl
             }
             else
             {
-                GameEvents.onGUIApplicationLauncherReady.Remove(OnGUIAppLauncherReady);
                 if (_appButtonStock != null)
                 {
                     ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
