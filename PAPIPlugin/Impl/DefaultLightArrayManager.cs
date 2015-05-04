@@ -191,21 +191,15 @@ namespace PAPIPlugin.Impl
         {
             LightConfig.Destroy();
 
-            if (LightConfig != null && LightConfig.UseBlizzy78Toolbar && ToolbarManager.ToolbarAvailable)
+            if (_blizzy78Button != null)
             {
-                if (_blizzy78Button != null)
-                {
-                    _blizzy78Button.Destroy();
-                    _blizzy78Button = null;
-                }
+                _blizzy78Button.Destroy();
+                _blizzy78Button = null;
             }
-            else
+            if (_appButtonStock != null)
             {
-                if (_appButtonStock != null)
-                {
-                    ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
-                    _appButtonStock = null;
-                }
+                ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
+                _appButtonStock = null;
             }
 
             if (_groupWindow != null)

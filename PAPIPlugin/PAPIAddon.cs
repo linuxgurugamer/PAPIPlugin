@@ -9,7 +9,16 @@ using UnityEngine;
 
 namespace PAPIPlugin
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
+    public class PPAPIAddonSpaceCentre : PAPIAddon
+    {
+    }
+
+    [KSPAddon(KSPAddon.Startup.Flight, false)]
+    public class PPAPIAddonFlight : PAPIAddon
+    {
+    }
+
     public class PAPIAddon : MonoBehaviour
     {
         private ILightArrayManager _arrayManager;
@@ -18,12 +27,6 @@ namespace PAPIPlugin
 
         public void Awake()
         {
-            if (HighLogic.LoadedScene != GameScenes.FLIGHT && HighLogic.LoadedScene != GameScenes.SPACECENTER)
-            {
-                enabled = false;
-                return;
-            }
-
             Util.LogInfo("Awake!");
 
             _arrayManager = new DefaultLightArrayManager();
