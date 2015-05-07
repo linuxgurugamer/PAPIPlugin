@@ -20,17 +20,20 @@ Then open the visual studio solution.
 You will need to add the assemblies **UnityEngine** and **Assembly-CSharp**
 from *<KSP_PATH>/KSP_Data/Managed* to the references of the project.
 After that either directly run or build the solition.
-~~The plugin will automatically be compied to your KSP install.~~
 
 Credits
 ----------
-TaranisElsu - Author of the TacLib library
+- TaranisElsu - Author of the TacLib library
 
-asarium - Author of Runway PAPI array
+- asarium - Author of Runway PAPI array
 
-angavrilov - Contributor of Runway PAPI array
+- angavrilov - Contributor of Runway PAPI array
 
-blizzy78 - Author of Toolbar
+- blizzy78 - Author of Toolbar
+
+- cybutek - Author of KSP-AVC
+
+- Authors of CKAN
 
 License
 ----------
