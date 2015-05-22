@@ -145,6 +145,7 @@ namespace PAPIPlugin.Impl
                 _groupWindow = new GroupWindow<ILightArrayConfig>(LightConfig);
                 _groupWindow.AllLightConfigReloaded += (sender, e) =>
                     {
+                        LightConfig.Destroy();  // not perfect..
                         LoadConfig();
                         _groupWindow.SetVisible(false);
                         _groupWindow = null;

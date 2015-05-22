@@ -43,24 +43,24 @@ namespace PAPIPlugin.Impl
 
         public void LoadConfig()
         {
-            foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightGroupNodeName))
+            //foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightGroupNodeName))
             {
+                var configNode = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/lights.cfg");
+                configNode = configNode.GetNode("LightGroup");
                 var lightGroup = CreateLightGroup();
 
                 var success = ConfigNode.LoadObjectFromConfig(lightGroup, configNode);
 
-                if (!success)
+                if (success)
                 {
-                    continue;
-                }
+                    var node = lightGroup as IConfigNode;
+                    if (node != null)
+                    {
+                        node.Load(configNode);
+                    }
 
-                var node = lightGroup as IConfigNode;
-                if (node != null)
-                {
-                    node.Load(configNode);
+                    _lightGroups.Add(lightGroup);
                 }
-
-                _lightGroups.Add(lightGroup);
             }
 
             foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightConfigNodeName))
