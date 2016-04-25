@@ -259,7 +259,7 @@ namespace PAPIPlugin.Arrays
             var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
             var material = new Material(Shader.Find("Particles/Additive"));
-            obj.renderer.sharedMaterial = material;
+            obj.GetComponent<Renderer>().sharedMaterial = material;
 
             obj.transform.localScale = new Vector3(LightRadius, LightRadius, LightRadius);
 
@@ -276,7 +276,7 @@ namespace PAPIPlugin.Arrays
             var color = GetArrayPartColor(index, difference);
             color.a = alpha;
 
-            gameObj.renderer.material.SetColor("_TintColor", color);
+            gameObj.GetComponent<Renderer>().material.SetColor("_TintColor", color);
         }
 
         private Color GetArrayPartColor(int index, double difference)

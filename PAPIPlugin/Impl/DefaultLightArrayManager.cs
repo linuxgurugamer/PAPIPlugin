@@ -15,7 +15,7 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayManager : ILightArrayManager
     {
-        private ApplicationLauncherButton _appButtonStock = null;
+        private KSP.UI.Screens.ApplicationLauncherButton _appButtonStock = null;
 
         private IButton _blizzy78Button = null;
 
@@ -109,16 +109,16 @@ namespace PAPIPlugin.Impl
 
         private void OnGUIAppLauncherReady()
         {
-            if (ApplicationLauncher.Ready)
+            if (KSP.UI.Screens.ApplicationLauncher.Ready)
             {
-                _appButtonStock = ApplicationLauncher.Instance.AddModApplication(
+                _appButtonStock = KSP.UI.Screens.ApplicationLauncher.Instance.AddModApplication(
                     OnIconClickHandler,
                     OnIconClickHandler,
                     DummyVoid,
                     DummyVoid,
                     DummyVoid,
                     DummyVoid,
-                    ApplicationLauncher.AppScenes.FLIGHT | ApplicationLauncher.AppScenes.SPACECENTER,
+                    KSP.UI.Screens.ApplicationLauncher.AppScenes.FLIGHT | KSP.UI.Screens.ApplicationLauncher.AppScenes.SPACECENTER,
                     (Texture)GameDatabase.Instance.GetTexture("PAPIPlugin/icon_button", false)
                 );
             }
@@ -199,7 +199,7 @@ namespace PAPIPlugin.Impl
             }
             if (_appButtonStock != null)
             {
-                ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
+                KSP.UI.Screens.ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
                 _appButtonStock = null;
             }
 
