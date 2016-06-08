@@ -100,6 +100,14 @@ namespace PAPIPlugin.Impl
             }
         }
 
+        public void OnGUI()
+        {
+            if (_groupWindow != null)
+            {
+                _groupWindow.OnGUI();
+            }
+        }
+
         public void Dispose()
         {
             Dispose(true);

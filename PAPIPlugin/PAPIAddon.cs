@@ -22,6 +22,7 @@ namespace PAPIPlugin
     public class PAPIAddon : MonoBehaviour
     {
         private ILightArrayManager _arrayManager;
+        private Callback postDrawCallbacks;
 
         private static ILightArrayConfig _config;
 
@@ -42,6 +43,7 @@ namespace PAPIPlugin
             }
 
             _arrayManager.InitializeButton();
+            postDrawCallbacks = new Callback(_arrayManager.OnGUI);
         }
 
         public void Update()
@@ -49,6 +51,14 @@ namespace PAPIPlugin
             if (_arrayManager != null)
             {
                 _arrayManager.Update();
+            }
+        }
+
+        public void OnGUI()
+        {
+            if (postDrawCallbacks != null)
+            {
+                postDrawCallbacks();
             }
         }
 
