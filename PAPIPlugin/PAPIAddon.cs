@@ -42,7 +42,7 @@ namespace PAPIPlugin
                 _arrayManager.LightConfig = _config;
             }
 
-            _arrayManager.InitializeButton();
+            GameEvents.onGUIApplicationLauncherReady.Add(_arrayManager.InitializeButton);
             postDrawCallbacks = new Callback(_arrayManager.OnGUI);
         }
 

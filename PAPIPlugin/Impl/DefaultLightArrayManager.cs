@@ -15,7 +15,7 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayManager : ILightArrayManager
     {
-        private KSP.UI.Screens.ApplicationLauncherButton _appButtonStock = null;
+        private static KSP.UI.Screens.ApplicationLauncherButton _appButtonStock = null;
 
         private IButton _blizzy78Button = null;
 
