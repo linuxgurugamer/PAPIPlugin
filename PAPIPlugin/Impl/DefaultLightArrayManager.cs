@@ -214,6 +214,7 @@ namespace PAPIPlugin.Impl
             if (_groupWindow != null)
             {
                 _groupWindow.SetVisible(false);
+                _groupWindow = null;
             }
         }
     }
