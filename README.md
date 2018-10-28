@@ -3,7 +3,7 @@ PAPIPlugin Continued
 Forked from https://github.com/asarium/PAPIPlugin.
 
 Origin work at 
-http://forum.kerbalspaceprogram.com/showthread.php/41435-0-20-Runway-PAPI-array
+https://forum.kerbalspaceprogram.com/index.php?/topic/38153-023-runway-papi-array-version-032/
  
 
 This plugin adds working PAPI arrays to the runways of Kerbal Space Program.
