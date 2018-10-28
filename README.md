@@ -19,7 +19,7 @@ which contains the path to your KSP install where the plugin should be deployed 
 Then open the visual studio solution.
 You will need to add the assemblies
 **UnityEngine**, **KSPUtil**, **Assembly-CSharp-firstpass** and **Assembly-CSharp**
-from *<KSP_PATH>/KSP_Data/Managed* to the references of the project.
+from *<KSP_PATH>/KSP_x64_Data/Managed* to the references of the project.
 After that either directly run or build the solition.
 
 Credits
