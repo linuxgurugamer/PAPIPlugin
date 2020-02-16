@@ -72,6 +72,7 @@ namespace PAPIPlugin
             Util.LogInfo("OnDestroy!");
 
             _arrayManager.Dispose();
+            GameEvents.onGUIApplicationLauncherReady.Remove(_arrayManager.InitializeButton);
         }
     }
 }

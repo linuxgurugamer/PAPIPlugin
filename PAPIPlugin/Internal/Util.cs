@@ -18,5 +18,10 @@ namespace PAPIPlugin.Internal
         {
             Debug.LogError("PAPIPlugin: " + msg);
         }
+
+        public static void LogTrace(object msg)
+        {
+            Debug.Log(string.Format("PAPIPlugin: {0}\n{1}", msg, System.Environment.StackTrace));
+        }
     }
 }
