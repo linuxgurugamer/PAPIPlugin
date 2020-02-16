@@ -27,8 +27,9 @@ namespace PAPIPlugin.Impl
 
         public bool DebugMode { get; set; }
 
+#if false
         public bool UseBlizzy78Toolbar { get; set; }
-
+#endif
         public PositionDecision positionDecision { get; set; }
 
         public void Destroy()
@@ -39,7 +40,7 @@ namespace PAPIPlugin.Impl
             }
         }
 
-        #endregion
+#endregion
 
         public void LoadConfig()
         {
@@ -66,7 +67,9 @@ namespace PAPIPlugin.Impl
             foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightConfigNodeName))
             {
                 DebugMode = configNode.ConvertValue("Debug", false);
+#if false
                 UseBlizzy78Toolbar = configNode.ConvertValue("UseBlizzy78Toolbar", false);
+#endif
                 positionDecision = configNode.ConvertValue("PositionDecision", PositionDecision.Auto);
             }
             PAPIPlugin.Arrays.PAPIArray.positionDecision = positionDecision;

@@ -258,7 +258,7 @@ namespace PAPIPlugin.Arrays
         {
             var obj = GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
-            var material = new Material(Shader.Find("Particles/Additive"));
+            var material = new Material(Shader.Find("Legacy Shaders/Particles/Additive"));
             obj.GetComponent<Renderer>().sharedMaterial = material;
 
             obj.transform.localScale = new Vector3(LightRadius, LightRadius, LightRadius);

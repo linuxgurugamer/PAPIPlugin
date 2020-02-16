@@ -1,0 +1,74 @@
+ChangeLog
+
+0.5.0
+	Adoption by Linuxgurugamer
+	Merge Taclib into source 
+	Changed Shader name
+	Updated for 1.8
+	Added Installchecker
+	AssemblyVersion.tt
+	Added Toolbarcontroller
+	Added Clickthroughblocker
+	Moved all PNG files into PluginData
+	Created complete changelog
+
+0.4.10
+	Recompile for KSP 1.5.1
+
+0.4.9.1
+	Recompile for KSP 1.4.4
+	fix setting dialog
+
+0.4.8
+	Recompile for KSP 1.1.2
+
+0.4.7
+	Fix compatibility issues
+
+0.4.6
+	compile for KSP 1.1.2
+
+0.4.5-rc1
+	Fix "Reload All" button, allow reloading from file without restarting the game.
+
+0.4.4
+	Recompile for KSP 1.0.2
+	Fix another bug with Application Launch button
+	Add KSP-AVC support
+	Add CKAN support
+
+0.4-beta.3
+	Recompile for KSP 1.0, fix bug that ApplicationLaunch button do not appear.
+
+0.4-beta.2
+	Fix a null reference error when loading crafts.
+
+0.4-beta.1
+	Can use both vessel position and camera position
+	(By default, use vessel position when flying, use camera position when IVA or in space center)
+	Allow saving config in flight.
+	Fix bug that HeightAboutTerrain do not work
+
+0.4-beta.0
+	Use vessel position instead of camera position in flight
+	Support stock toolbar and blizzy78's toolbar
+	Recompile for KSP 0.90
+
+0.3.2
+	This fixes a bug which caused the array to become unresponsive after going into map view.
+
+0.3.1
+	This fixes placement issues in KSP 0.22
+
+0.3
+	This version adds a graphical user interface which allows interactive changes to the target glideslope of the PAPI arrays.	
+	It also replaces the PAPI "light" rectangles with spheres which look better.
+	Some config values have been changed, take a look at the forum post for more informations.
+
+0.2
+	This release adds a modular light array setup which allows for easy future expansion.
+	It also adds config file parsing for adding light arrays without changing the code0.1
+	
+0.1
+	Initial release of the plugin which adds two arrays at the ends of the primary runway at KSC.
+

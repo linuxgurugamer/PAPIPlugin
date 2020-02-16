@@ -9,15 +9,23 @@ using PAPIPlugin.UI;
 using Tac;
 using UnityEngine;
 
+using ToolbarControl_NS;
+
+
 #endregion
 
 namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayManager : ILightArrayManager
     {
-        private static KSP.UI.Screens.ApplicationLauncherButton _appButtonStock = null;
+        //private static KSP.UI.Screens.ApplicationLauncherButton _appButtonStock = null;
 
-        private IButton _blizzy78Button = null;
+        //private IButton _blizzy78Button = null;
+
+        internal ToolbarControl toolbarControl;
+        internal const string MODID = "PAPIPlugin";
+        internal const string MODNAME = "PAPIPlugin";
+
 
         private GroupWindow<ILightArrayConfig> _groupWindow;
 
@@ -79,6 +87,7 @@ namespace PAPIPlugin.Impl
 
         public void InitializeButton()
         {
+#if false
             if (LightConfig != null && LightConfig.UseBlizzy78Toolbar && ToolbarManager.ToolbarAvailable)
             {
                 AddBlizzy78ToolbarButton();
@@ -90,6 +99,8 @@ namespace PAPIPlugin.Impl
                     OnGUIAppLauncherReady();
                 }
             }
+#endif
+            OnGUIAppLauncherReady();
         }
 
         public void Update()
@@ -117,6 +128,7 @@ namespace PAPIPlugin.Impl
 
         private void OnGUIAppLauncherReady()
         {
+#if false
             if (KSP.UI.Screens.ApplicationLauncher.Ready)
             {
                 _appButtonStock = KSP.UI.Screens.ApplicationLauncher.Instance.AddModApplication(
@@ -130,8 +142,23 @@ namespace PAPIPlugin.Impl
                     (Texture)GameDatabase.Instance.GetTexture("PAPIPlugin/icon_button", false)
                 );
             }
+#endif
+            if (toolbarControl == null)
+            {
+                var gameObject = new GameObject();
+                toolbarControl = gameObject.AddComponent<ToolbarControl>();
+                toolbarControl.AddToAllToolbars(OnIconClickHandler, OnIconClickHandler,
+                    KSP.UI.Screens.ApplicationLauncher.AppScenes.FLIGHT | KSP.UI.Screens.ApplicationLauncher.AppScenes.SPACECENTER,
+                    MODID,
+                    "papiButton",
+                    "PAPIPlugin/PluginData/icon_button",
+                    "PAPIPlugin/PluginData/icon_button24",
+                    MODNAME
+                );
+            }
         }
 
+#if false
         private void AddBlizzy78ToolbarButton()
         {
             if (_blizzy78Button == null)
@@ -143,7 +170,7 @@ namespace PAPIPlugin.Impl
                 _blizzy78Button.OnClick += (e) => OnIconClickHandler();
             }
         }
-
+#endif
         private void DummyVoid() { }
 
         private void OnIconClickHandler()
@@ -166,12 +193,14 @@ namespace PAPIPlugin.Impl
             {
                 _groupWindow.ToggleVisible();
             }
-
+#if false
             if ((LightConfig != null && !LightConfig.UseBlizzy78Toolbar) || !ToolbarManager.ToolbarAvailable)
             {
                 // Don't lock highlight on the button since it's just a toggle
                 _appButtonStock.SetFalse(false);
             }
+#endif
+            toolbarControl.SetFalse(false);
         }
 
         private void InitializeConfig(ILightArrayConfig lightConfig)
@@ -200,6 +229,7 @@ namespace PAPIPlugin.Impl
         {
             LightConfig.Destroy();
 
+#if false
             if (_blizzy78Button != null)
             {
                 _blizzy78Button.Destroy();
@@ -210,7 +240,13 @@ namespace PAPIPlugin.Impl
                 KSP.UI.Screens.ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
                 _appButtonStock = null;
             }
+#endif
 
+            if (toolbarControl != null)
+            {
+                toolbarControl.OnDestroy();
+                GameObject.Destroy(toolbarControl);
+            }
             if (_groupWindow != null)
             {
                 _groupWindow.SetVisible(false);

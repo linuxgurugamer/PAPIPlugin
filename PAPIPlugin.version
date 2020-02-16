@@ -1,0 +1,25 @@
+{
+    "NAME":"PAPIPlugin",
+    "URL": "http://ksp.spacetux.net/avc/PAPIPlugin",
+    "DOWNLOAD": "https://github.com/linuxgurugamer/PAPIPlugin/releases",
+    "GITHUB":
+    {
+        "USERNAME":"linuxgurugamer",
+        "REPOSITORY":"PAPIPlugin",
+        "ALLOW_PRE_RELEASE":true,
+    },
+    "VERSION":
+    {
+        "MAJOR":0,
+        "MINOR":5,
+        "PATCH":0,
+        "BUILD":0
+    },
+    "KSP_VERSION_MIN":
+    {
+        "MAJOR":1,
+        "MINOR":8,
+        "PATCH":0
+
+    }
+} 
