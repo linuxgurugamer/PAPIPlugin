@@ -1,6 +1,7 @@
 ﻿#region Usings
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using PAPIPlugin.Interfaces;
@@ -12,9 +13,9 @@ namespace PAPIPlugin.Impl
 {
     public class DefaultLightArrayConfig : ILightArrayConfig
     {
-        private const string LightGroupNodeName = "LightGroup";
+        private const string LIGHTGROUP = "LightGroup";
 
-        private const string LightConfigNodeName = "LightConfig";
+        private const string LIGHTCONFIG = "LightConfig";
 
         private readonly ICollection<ILightGroup> _lightGroups = new List<ILightGroup>();
 
@@ -27,9 +28,7 @@ namespace PAPIPlugin.Impl
 
         public bool DebugMode { get; set; }
 
-#if false
-        public bool UseBlizzy78Toolbar { get; set; }
-#endif
+
         public PositionDecision positionDecision { get; set; }
 
         public void Destroy()
@@ -40,16 +39,41 @@ namespace PAPIPlugin.Impl
             }
         }
 
-#endregion
+        #endregion
+
+        void LoadRuntimeConfig()
+        {
+            var fname = KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/PAPI.config";
+            if (File.Exists(fname))
+            {
+                var config = ConfigNode.Load(fname);
+                var nodes = config.GetNodes(LIGHTGROUP);
+                foreach (var configNode in nodes)
+                {
+                    var lightGroup = CreateLightGroup();
+                    lightGroup.stdConfig = false;
+                    var success = ConfigNode.LoadObjectFromConfig(lightGroup, configNode);
+
+                    if (success)
+                    {
+                        var node = lightGroup as IConfigNode;
+                        if (node != null)
+                        {
+                            node.Load(configNode);
+                        }
+
+                        _lightGroups.Add(lightGroup);
+                    }
+                }
+            }
+        }
 
         public void LoadConfig()
         {
-            //foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightGroupNodeName))
+            foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LIGHTGROUP))
             {
-                var configNode = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/lights.cfg");
-                configNode = configNode.GetNode("LightGroup");
                 var lightGroup = CreateLightGroup();
-
+                lightGroup.stdConfig = true;
                 var success = ConfigNode.LoadObjectFromConfig(lightGroup, configNode);
 
                 if (success)
@@ -63,56 +87,56 @@ namespace PAPIPlugin.Impl
                     _lightGroups.Add(lightGroup);
                 }
             }
-
-            foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LightConfigNodeName))
+            LoadRuntimeConfig();
+            foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LIGHTCONFIG))
             {
                 DebugMode = configNode.ConvertValue("Debug", false);
-#if false
-                UseBlizzy78Toolbar = configNode.ConvertValue("UseBlizzy78Toolbar", false);
-#endif
                 positionDecision = configNode.ConvertValue("PositionDecision", PositionDecision.Auto);
             }
             PAPIPlugin.Arrays.PAPIArray.positionDecision = positionDecision;
         }
 
-        public void SaveConfig()
+        public void SaveConfig(bool saveAll = false)
         {
             var configNode = new ConfigNode();
             configNode.name = "PAPIPlugin";
 
             foreach (var lightGroup in _lightGroups)
             {
-                var groupConfigNode = new ConfigNode();
-                groupConfigNode.name = "LightGroup";
-
-                groupConfigNode.AddValue("Name", lightGroup.Name);
-                groupConfigNode.AddValue("Body", lightGroup.ParentBody.name);
-
-                foreach (var lightArray in lightGroup.LightArrays)
+                if (saveAll || lightGroup.stdConfig)
                 {
-                    var papi = lightArray as PAPIPlugin.Arrays.PAPIArray;
+                    var groupConfigNode = new ConfigNode();
+                    groupConfigNode.name = "LightGroup";
 
-                    var arrayConfigNode = new ConfigNode();
-                    arrayConfigNode.name = "LightArray";
+                    groupConfigNode.AddValue("Name", lightGroup.Name);
+                    groupConfigNode.AddValue("Body", lightGroup.ParentBody.name);
 
-                    arrayConfigNode.AddValue("Type", lightArray.GetType().Name);
-                    arrayConfigNode.AddValue("Namespace", lightArray.GetType().Namespace);
+                    foreach (var lightArray in lightGroup.LightArrays)
+                    {
+                        var papi = lightArray as PAPIPlugin.Arrays.PAPIArray;
 
-                    arrayConfigNode.AddValue("Latitude", papi.Latitude);
-                    arrayConfigNode.AddValue("Longitude", papi.Longitude);
+                        var arrayConfigNode = new ConfigNode();
+                        arrayConfigNode.name = "LightArray";
 
-                    arrayConfigNode.AddValue("Heading", papi.Heading * 180 / Math.PI);
+                        arrayConfigNode.AddValue("Type", lightArray.GetType().Name);
+                        arrayConfigNode.AddValue("Namespace", lightArray.GetType().Namespace);
 
-                    arrayConfigNode.AddValue("GlideslopeTolerance", papi.GlideslopeTolerance);
-                    arrayConfigNode.AddValue("TargetGlideslope", papi.TargetGlideslope);
-                    arrayConfigNode.AddValue("HeightAboveTerrain", papi.HeightAboveTerrain);
-                    arrayConfigNode.AddValue("PartCount", papi.PartCount);
-                    arrayConfigNode.AddValue("LightRadius", papi.LightRadius);
-                    arrayConfigNode.AddValue("LightDistance", papi.LightDistance);
+                        arrayConfigNode.AddValue("Latitude", papi.Latitude);
+                        arrayConfigNode.AddValue("Longitude", papi.Longitude);
 
-                    groupConfigNode.AddNode(arrayConfigNode);
+                        arrayConfigNode.AddValue("Heading", papi.Heading * 180 / Math.PI);
+
+                        arrayConfigNode.AddValue("GlideslopeTolerance", papi.GlideslopeTolerance);
+                        arrayConfigNode.AddValue("TargetGlideslope", papi.TargetGlideslope);
+                        arrayConfigNode.AddValue("HeightAboveTerrain", papi.HeightAboveTerrain);
+                        arrayConfigNode.AddValue("PartCount", papi.PartCount);
+                        arrayConfigNode.AddValue("LightRadius", papi.LightRadius);
+                        arrayConfigNode.AddValue("LightDistance", papi.LightDistance);
+
+                        groupConfigNode.AddNode(arrayConfigNode);
+                    }
+                    configNode.AddNode(groupConfigNode);
                 }
-                configNode.AddNode(groupConfigNode);
             }
             configNode.Save(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/lights.cfg", "PAPIPlugin");
         }

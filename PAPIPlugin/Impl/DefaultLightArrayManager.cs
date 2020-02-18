@@ -24,7 +24,7 @@ namespace PAPIPlugin.Impl
 
         internal ToolbarControl toolbarControl;
         internal const string MODID = "PAPIPlugin";
-        internal const string MODNAME = "PAPIPlugin";
+        internal const string MODNAME = "PAPI Lights";
 
 
         private GroupWindow<ILightArrayConfig> _groupWindow;
@@ -76,12 +76,13 @@ namespace PAPIPlugin.Impl
             return LightConfig;
         }
 
-        public void SaveConfig()
+        public void SaveConfig(EventArgs ea)
         {
+            var b = ea as SaveAllBool;
             if (LightConfig != null)
             {
                 var config = LightConfig as DefaultLightArrayConfig;
-                config.SaveConfig();
+                config.SaveConfig(b.saveAll);
             }
         }
 
@@ -182,11 +183,11 @@ namespace PAPIPlugin.Impl
                     {
                         LightConfig.Destroy();  // not perfect..
                         LoadConfig();
-                        _groupWindow.SetVisible(false);
-                        _groupWindow = null;
+                        //_groupWindow.SetVisible(false);
+                        //_groupWindow = null;
                         AllLightConfigReloaded(this, e);
                     };
-                _groupWindow.AllLightConfigSaved += (sender, e) => SaveConfig();
+                _groupWindow.AllLightConfigSaved += (sender, e) => SaveConfig(e);
                 _groupWindow.SetVisible(true);
             }
             else

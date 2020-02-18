@@ -86,6 +86,8 @@ namespace PAPIPlugin.Arrays
                 Latitude = node.ConvertValueWithException<double>("Latitude").ClampAndLog(-90, 90);
 
                 var headingDeg = node.ConvertValueWithException<double>("Heading").ClampAndLog(0, 360);
+
+                headingDeg = (headingDeg + 180) % 360;
                 Heading = (headingDeg / 180) * Math.PI;
             }
             catch (FormatException e)
@@ -217,7 +219,7 @@ namespace PAPIPlugin.Arrays
                 var obj = AddPAPIPart();
 
                 obj.transform.parent = _papiGameObject.transform;
-                obj.transform.localPosition = GetLocalLighPosition(i);
+                obj.transform.localPosition = GetLocalLightPosition(i);
 
                 maxHeight = Math.Max(maxHeight, parentBody.GetSurfaceHeight(Latitude, Longitude));
 
@@ -235,7 +237,7 @@ namespace PAPIPlugin.Arrays
         /// </summary>
         /// <param name="i">The index of the light, zero-based</param>
         /// <returns>A local position specifying the light position</returns>
-        private Vector3 GetLocalLighPosition(int i)
+        private Vector3 GetLocalLightPosition(int i)
         {
             var countHalf = PartCount / 2.0;
 
@@ -243,6 +245,7 @@ namespace PAPIPlugin.Arrays
 
             var distance = LightRadius + LightDistance;
 
+            return Vector3.left * offsetMult * distance;
             return Vector3.right * offsetMult * distance;
         }
 

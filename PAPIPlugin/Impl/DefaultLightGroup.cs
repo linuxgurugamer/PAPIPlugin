@@ -95,6 +95,8 @@ namespace PAPIPlugin.Impl
 
         public string Name { get; private set; }
 
+        public bool stdConfig { get; set; }
+
         public CelestialBody ParentBody { get; private set; }
 
         public IEnumerable<ILightArray> LightArrays

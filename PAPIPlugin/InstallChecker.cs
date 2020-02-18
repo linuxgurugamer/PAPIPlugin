@@ -41,7 +41,7 @@ namespace PAPIPlugin
     internal class InstallChecker : MonoBehaviour
     {
         private const string MODNAME = "PAPIPlugin";
-        private const string FOLDERNAME = "PAPIPlugin";
+        private const string FOLDERNAME = "PAPI Lights";
         private const string EXPECTEDPATH = FOLDERNAME + "/Plugins";
 
         protected void Start()

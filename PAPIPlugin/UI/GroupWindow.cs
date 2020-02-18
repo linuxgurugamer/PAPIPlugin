@@ -81,16 +81,28 @@ namespace PAPIPlugin.UI
 
             GUILayout.BeginHorizontal();
             {
+                if (GUILayout.Button("Save Std", _buttonStyle))
+                {
+                    AllLightConfigSaved(this, new SaveAllBool(false));
+                }
                 if (GUILayout.Button("Save All", _buttonStyle))
                 {
-                    AllLightConfigSaved(this, null);
+                    AllLightConfigSaved(this, new SaveAllBool(true));
                 }
-                if (GUILayout.Button("Reload All", _buttonStyle))
+                if (GUILayout.Button("Reload PAPI.config", _buttonStyle))
                 {
                     AllLightConfigReloaded(this, null);
                 }
             }
             GUILayout.EndHorizontal();
+        }
+    }
+    internal class SaveAllBool: EventArgs
+    {
+        internal bool saveAll;
+        internal SaveAllBool(bool b)
+        {
+            saveAll = b;
         }
     }
 }

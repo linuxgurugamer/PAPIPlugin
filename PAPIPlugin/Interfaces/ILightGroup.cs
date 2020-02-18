@@ -13,6 +13,7 @@ namespace PAPIPlugin.Interfaces
 
         IEnumerable<ILightArray> LightArrays { get; }
 
+        bool stdConfig { get; set; }
         void Update();
 
         T GetOrAddTypeManager<T>() where T : ILightTypeManager, new();

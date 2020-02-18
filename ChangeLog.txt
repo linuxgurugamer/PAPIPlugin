@@ -1,4 +1,21 @@
 ChangeLog
+Precision Approach Path Indicator
+
+0.5.0.1
+	Fixed heading reversal in config file
+	Redid config options:
+		light.cfg	Loaded at boot time, modifyable by ModuleManager
+		PAPI.config	Loaded at run time, not modified by ModuleManager
+
+	The PAP.config can be changed and reloaded anytime.
+	Added new save options:
+		Save Std	Saves the settings load from light.cfg, back into light.cfg
+		Save All	Saves both light.cfg and PAPI.cfg back into light.cfg
+
+	Note that if you do a save all, and reload the game, you will get all the options in the PAPI.config doubled.
+
+	Thanks to @JadeOfMaar
+		Added Island Airfield indicators
 
 0.5.0
 	Adoption by Linuxgurugamer
