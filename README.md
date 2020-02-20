@@ -11,6 +11,53 @@ The array will show two red and two white lights when following correct glide sl
 
 ![UI](http://i.imgur.com/8C42Qjy.png)
 
+======================================================================================================
+The following is an easy way to create new settings:
+    First, install Vessel Mover,  Waypoint Manager, HyperEdit and NavHud
+    Launch a plane or rover (small rover is more accurate), and move it to the desired runway.  Depending 
+		on what mods you have installed, you might be able to launch it at the new location, otherwise you can 
+		use HyperEdit or any other method to move the vessel to the new location
+    Use Vessel Mover to position the vessel where you want the lights to be.  The lights are normally at 
+		the left side of the runway (as you approach)
+    Use Waypoint Manager to create a waypoint where the vessel is.
+    Create a new file in the PAPIPlugin directory called PAPI.config.  Add the following to the file. For 
+		the second section, move to the other end of the runway, turn around, and repeat
+    
+LightGroup
+{
+	Name = (replace with location name)
+	Body = (replace with planetary body name)
+	LightArray 
+	{
+		Type = PAPIArray
+		Namespace = PAPIPlugin.Arrays
+		Latitude = (replace with Latitude of array location)
+		Longitude = (replace with Longitude of array location)
+		Heading = (direction of runway MINUS 90)
+		GlideslopeTolerance = 1.5
+		TargetGlideslope = 3
+		HeightAboveTerrain = 7
+		PartCount = 4
+		LightRadius = 8
+		LightDistance = 6
+	}
+	LightArray 
+	{
+		Type = PAPIArray
+		Namespace = PAPIPlugin.Arrays
+		Latitude = (replace with Latitude of array location)
+		Longitude = (replace with Longitude of array location)
+		Heading = (direction of runway PLUS 90)
+		GlideslopeTolerance = 1.5
+		TargetGlideslope = 3
+		HeightAboveTerrain = 7
+		PartCount = 4
+		LightRadius = 8
+		LightDistance = 6
+	}
+}
+
+======================================================================================================
 Config file documentation:
 
 Version 0.2 added the possibility to add light arrays within a config file. This is done by the LightGroup config node type. 
