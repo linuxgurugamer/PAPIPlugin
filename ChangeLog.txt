@@ -1,6 +1,10 @@
 ChangeLog
 Precision Approach Path Indicator
 
+0.5.0.4
+	Added settings page for debug flag
+	Added debug logging when debug flag is set.  Debug spams log, so use sparingly
+
 0.5.0.3
 	Fixed folder name in InstallChecker
 

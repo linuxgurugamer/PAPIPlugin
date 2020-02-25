@@ -88,19 +88,6 @@ namespace PAPIPlugin.Impl
 
         public void InitializeButton()
         {
-#if false
-            if (LightConfig != null && LightConfig.UseBlizzy78Toolbar && ToolbarManager.ToolbarAvailable)
-            {
-                AddBlizzy78ToolbarButton();
-            }
-            else
-            {
-                if (_appButtonStock == null)
-                {
-                    OnGUIAppLauncherReady();
-                }
-            }
-#endif
             OnGUIAppLauncherReady();
         }
 

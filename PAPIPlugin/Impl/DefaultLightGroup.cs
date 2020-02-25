@@ -154,6 +154,8 @@ namespace PAPIPlugin.Impl
 
         public void Destroy()
         {
+            if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                Util.LogDebugInfo("DefaultLightGroup.Destroy: " + Name);
             foreach (var lightArray in _lightArrays)
             {
                 lightArray.Destroy();

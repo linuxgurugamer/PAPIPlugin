@@ -7,6 +7,8 @@ using System.Linq;
 using PAPIPlugin.Interfaces;
 using PAPIPlugin.Internal;
 
+using UnityEngine;
+
 #endregion
 
 namespace PAPIPlugin.Impl
@@ -70,6 +72,9 @@ namespace PAPIPlugin.Impl
 
         public void LoadConfig()
         {
+            if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                Util.LogDebugInfo("LoadConfig");
+
             foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LIGHTGROUP))
             {
                 var lightGroup = CreateLightGroup();
@@ -83,6 +88,8 @@ namespace PAPIPlugin.Impl
                     {
                         node.Load(configNode);
                     }
+                    if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                        Util.LogDebugInfo("LoadConfig: LightGroup: " + lightGroup.ToString());
 
                     _lightGroups.Add(lightGroup);
                 }
@@ -90,7 +97,7 @@ namespace PAPIPlugin.Impl
             LoadRuntimeConfig();
             foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LIGHTCONFIG))
             {
-                DebugMode = configNode.ConvertValue("Debug", false);
+                DebugMode = configNode.ConvertValue("Debug", false) | HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug;
                 positionDecision = configNode.ConvertValue("PositionDecision", PositionDecision.Auto);
             }
             PAPIPlugin.Arrays.PAPIArray.positionDecision = positionDecision;
@@ -100,6 +107,9 @@ namespace PAPIPlugin.Impl
         {
             var configNode = new ConfigNode();
             configNode.name = "PAPIPlugin";
+
+            if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                Util.LogDebugInfo("SaveConfig");
 
             foreach (var lightGroup in _lightGroups)
             {
@@ -132,6 +142,9 @@ namespace PAPIPlugin.Impl
                         arrayConfigNode.AddValue("PartCount", papi.PartCount);
                         arrayConfigNode.AddValue("LightRadius", papi.LightRadius);
                         arrayConfigNode.AddValue("LightDistance", papi.LightDistance);
+
+                        if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                            Util.LogDebugInfo("SaveConfig:LightArray: " + arrayConfigNode);
 
                         groupConfigNode.AddNode(arrayConfigNode);
                     }

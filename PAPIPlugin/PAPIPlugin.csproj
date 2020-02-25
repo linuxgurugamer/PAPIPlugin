@@ -85,6 +85,7 @@
     <Compile Include="Internal\ConfigNodeExtensions.cs" />
     <Compile Include="Internal\ExtensionMethods.cs" />
     <Compile Include="RegisterToolbar.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="UI\EditableGUIField.cs" />
     <Compile Include="LightArrayEventArguments.cs" />
     <Compile Include="Impl\DefaultLightArrayManager.cs" />

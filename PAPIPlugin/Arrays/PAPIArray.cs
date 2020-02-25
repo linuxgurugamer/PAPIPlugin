@@ -286,10 +286,14 @@ namespace PAPIPlugin.Arrays
         {
             if (difference < -GlideslopeTolerance)
             {
+                if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                    Util.LogDebugInfo("GetArrayPartColor, Returning red, difference < -GlideslopeTolerance");
                 return Color.red;
             }
             if (difference > GlideslopeTolerance)
             {
+                if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+                    Util.LogDebugInfo("GetArrayPartColor, Returning white, difference > GlideslopeTolerance");
                 return Color.white;
             }
 
@@ -297,6 +301,13 @@ namespace PAPIPlugin.Arrays
             double temp = index - (PartCount / 2);
 // ReSharper disable once PossibleLossOfFraction
             temp = temp / (PartCount / 2);
+            if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
+            {
+                if (temp > difference)
+                    Util.LogDebugInfo("GetArrayPartColor, within GlideslopeTolerance, Returning red, temp > difference");
+                else
+                    Util.LogDebugInfo("GetArrayPartColor, within GlideslopeTolerance, Returning white, temp < difference");
+            }
 
             return temp > difference ? Color.red : Color.white;
         }
