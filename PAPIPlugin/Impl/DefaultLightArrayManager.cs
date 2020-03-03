@@ -39,7 +39,7 @@ namespace PAPIPlugin.Impl
 
         public event EventHandler ParsingFinished;
 
-        public event EventHandler AllLightConfigReloaded;
+        //public event EventHandler AllLightConfigReloaded;
 
         public ILightArrayConfig LightConfig
         {
@@ -116,21 +116,6 @@ namespace PAPIPlugin.Impl
 
         private void OnGUIAppLauncherReady()
         {
-#if false
-            if (KSP.UI.Screens.ApplicationLauncher.Ready)
-            {
-                _appButtonStock = KSP.UI.Screens.ApplicationLauncher.Instance.AddModApplication(
-                    OnIconClickHandler,
-                    OnIconClickHandler,
-                    DummyVoid,
-                    DummyVoid,
-                    DummyVoid,
-                    DummyVoid,
-                    KSP.UI.Screens.ApplicationLauncher.AppScenes.FLIGHT | KSP.UI.Screens.ApplicationLauncher.AppScenes.SPACECENTER,
-                    (Texture)GameDatabase.Instance.GetTexture("PAPIPlugin/icon_button", false)
-                );
-            }
-#endif
             if (toolbarControl == null)
             {
                 var gameObject = new GameObject();
@@ -146,19 +131,6 @@ namespace PAPIPlugin.Impl
             }
         }
 
-#if false
-        private void AddBlizzy78ToolbarButton()
-        {
-            if (_blizzy78Button == null)
-            {
-                _blizzy78Button = ToolbarManager.Instance.add("PAPIPlugin", "PAPIPluginSetting");
-                _blizzy78Button.TexturePath = "PAPIPlugin/icon_button24";
-                _blizzy78Button.ToolTip = "PAPIPlugin Setting";
-                _blizzy78Button.Visibility = new GameScenesVisibility(GameScenes.FLIGHT, GameScenes.SPACECENTER);
-                _blizzy78Button.OnClick += (e) => OnIconClickHandler();
-            }
-        }
-#endif
         private void DummyVoid() { }
 
         private void OnIconClickHandler()
@@ -166,14 +138,6 @@ namespace PAPIPlugin.Impl
             if (_groupWindow == null)
             {
                 _groupWindow = new GroupWindow<ILightArrayConfig>(LightConfig);
-                _groupWindow.AllLightConfigReloaded += (sender, e) =>
-                    {
-                        LightConfig.Destroy();  // not perfect..
-                        LoadConfig();
-                        //_groupWindow.SetVisible(false);
-                        //_groupWindow = null;
-                        AllLightConfigReloaded(this, e);
-                    };
                 _groupWindow.AllLightConfigSaved += (sender, e) => SaveConfig(e);
                 _groupWindow.SetVisible(true);
             }
@@ -181,13 +145,7 @@ namespace PAPIPlugin.Impl
             {
                 _groupWindow.ToggleVisible();
             }
-#if false
-            if ((LightConfig != null && !LightConfig.UseBlizzy78Toolbar) || !ToolbarManager.ToolbarAvailable)
-            {
-                // Don't lock highlight on the button since it's just a toggle
-                _appButtonStock.SetFalse(false);
-            }
-#endif
+
             toolbarControl.SetFalse(false);
         }
 
@@ -199,6 +157,14 @@ namespace PAPIPlugin.Impl
             }
         }
 
+        public void ReloadPAPIConfig()
+        {
+            LightConfig.Destroy();  // not perfect..
+            LightConfig = LoadConfig();
+            //_groupWindow.SetVisible(false);
+            //_groupWindow = null;
+            //AllLightConfigReloaded(this, e);
+        }
         protected virtual void OnParsingFinished()
         {
             var handler = ParsingFinished;
@@ -216,19 +182,6 @@ namespace PAPIPlugin.Impl
         protected virtual void Dispose(bool disposing)
         {
             LightConfig.Destroy();
-
-#if false
-            if (_blizzy78Button != null)
-            {
-                _blizzy78Button.Destroy();
-                _blizzy78Button = null;
-            }
-            if (_appButtonStock != null)
-            {
-                KSP.UI.Screens.ApplicationLauncher.Instance.RemoveModApplication(_appButtonStock);
-                _appButtonStock = null;
-            }
-#endif
 
             if (toolbarControl != null)
             {

@@ -1,6 +1,11 @@
 ChangeLog
 Precision Approach Path Indicator
 
+0.5.0.5
+	Fixed saving and loading of light data
+	Moved lights.cfg into PluginData *** VERY IMPORTANT ***
+	Removed about 1000+ lines of old code related to the old Toolbar & Blizzy Toolbar 
+
 0.5.0.4
 	Added settings page for debug flag
 	Added debug logging when debug flag is set.  Debug spams log, so use sparingly

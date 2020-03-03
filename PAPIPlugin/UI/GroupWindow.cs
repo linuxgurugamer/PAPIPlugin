@@ -24,7 +24,7 @@ namespace PAPIPlugin.UI
 
         public event EventHandler AllLightConfigSaved;
 
-        public event EventHandler AllLightConfigReloaded;
+        //public event EventHandler AllLightConfigReloaded;
 
         public GroupWindow(T arrayConfig) : base("Group configuration", 400, 200)
         {
@@ -91,7 +91,8 @@ namespace PAPIPlugin.UI
                 }
                 if (GUILayout.Button("Reload PAPI.config", _buttonStyle))
                 {
-                    AllLightConfigReloaded(this, null);
+                    PAPIAddon.fetch._arrayManager.ReloadPAPIConfig();
+                    //AllLightConfigReloaded(this, null);
                 }
             }
             GUILayout.EndHorizontal();

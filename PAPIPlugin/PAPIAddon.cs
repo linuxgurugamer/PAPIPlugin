@@ -9,19 +9,12 @@ using UnityEngine;
 
 namespace PAPIPlugin
 {
-    [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
-    public class PPAPIAddonSpaceCentre : PAPIAddon
-    {
-    }
-
-    [KSPAddon(KSPAddon.Startup.Flight, false)]
-    public class PPAPIAddonFlight : PAPIAddon
-    {
-    }
-
+    [KSPAddon(KSPAddon.Startup.FlightAndKSC, false)]
     public class PAPIAddon : MonoBehaviour
     {
-        private ILightArrayManager _arrayManager;
+        static internal PAPIAddon fetch;
+
+        internal ILightArrayManager _arrayManager;
         private Callback postDrawCallbacks;
 
         private static ILightArrayConfig _config;
@@ -29,9 +22,8 @@ namespace PAPIPlugin
         public void Awake()
         {
             Util.LogInfo("Awake!");
-
+            fetch = this;
             _arrayManager = new DefaultLightArrayManager();
-            _arrayManager.AllLightConfigReloaded += (sender, e) => _config = _arrayManager.LightConfig;
 
             if (_config == null)
             {

@@ -75,7 +75,8 @@ namespace PAPIPlugin.Impl
             if (HighLogic.CurrentGame.Parameters.CustomParams<PAPI>().debug)
                 Util.LogDebugInfo("LoadConfig");
 
-            foreach (var configNode in GameDatabase.Instance.GetConfigNodes(LIGHTGROUP))
+            ConfigNode allNodes = ConfigNode.Load(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/PluginData/lights.cfg");
+            foreach (var configNode in allNodes.GetNodes(LIGHTGROUP))
             {
                 var lightGroup = CreateLightGroup();
                 lightGroup.stdConfig = true;
@@ -151,7 +152,7 @@ namespace PAPIPlugin.Impl
                     configNode.AddNode(groupConfigNode);
                 }
             }
-            configNode.Save(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/lights.cfg", "PAPIPlugin");
+            configNode.Save(KSPUtil.ApplicationRootPath + "GameData/PAPIPlugin/PluginData/lights.cfg", "PAPIPlugin");
         }
 
         protected virtual ILightGroup CreateLightGroup()

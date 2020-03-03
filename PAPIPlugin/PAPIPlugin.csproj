@@ -95,7 +95,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Internal\Util.cs" />
     <Compile Include="UI\GroupWindow.cs" />
-    <Compile Include="UI\ToolbarWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="AssemblyVersion.tt">

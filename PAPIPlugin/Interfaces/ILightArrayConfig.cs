@@ -25,12 +25,6 @@ namespace PAPIPlugin.Interfaces
         /// </summary>
         bool DebugMode { get; set; }
 
-#if false
-        /// <summary>
-        ///     Use blizzy78's toolbar, if possible
-        /// </summary>
-        bool UseBlizzy78Toolbar { get; set; }
-#endif
         /// <summary>
         ///     Use carera / vessel position as relative position.
         ///     "Auto" means use camera position in IVA, use vessel position in flight.
