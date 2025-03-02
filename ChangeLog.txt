@@ -1,6 +1,9 @@
 ChangeLog
 Precision Approach Path Indicator
 
+0.5.0.7
+	Updated version file to use github for new version info
+
 0.5.0.6
 	Added AssemblyFileVersion
 	Updated version file for 1.12
